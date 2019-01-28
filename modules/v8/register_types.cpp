@@ -28,11 +28,11 @@
 /*************************************************************************/
 
 #include "register_types.h"
-#include "class_db.h"
-#include "io/resource_loader.h"
-#include "io/resource_saver.h"
+#include "core/class_db.h"
+#include "core/io/resource_loader.h"
+#include "core/io/resource_saver.h"
+#include "core/script_language.h"
 #include "js_language.h"
-#include "script_language.h"
 
 JavaScriptLanguage *js_v8_language = NULL;
 ResourceFormatLoaderJavaScript *js_resource_loader = NULL;

@@ -30,13 +30,12 @@
 #include "js_functions.h"
 #include "js_language.h"
 
-#include "class_db.h"
-#include "math_2d.h"
-#include "os/dir_access.h"
-#include "os/file_access.h"
-#include "print_string.h"
-#include "variant.h"
-#include "vector.h"
+#include "core/class_db.h"
+#include "core/os/dir_access.h"
+#include "core/os/file_access.h"
+#include "core/print_string.h"
+#include "core/variant.h"
+#include "core/vector.h"
 
 #include "v8.h"
 

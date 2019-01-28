@@ -30,39 +30,38 @@
 #ifndef JS_FUNCTIONS_H
 #define JS_FUNCTIONS_H
 
-#include "object.h"
-#include "variant.h"
+#include "core/object.h"
+#include "core/variant.h"
 
 #include "v8.h"
 
 class JavaScriptFunctions {
 
 	friend class JavaScriptLanguage;
-	static Object* unwrap_object(const v8::Local<v8::Object> &p_value);
-	static Variant* unwrap_variant(const v8::Local<v8::Object> &p_value);
+	static Object *unwrap_object(const v8::Local<v8::Object> &p_value);
+	static Variant *unwrap_variant(const v8::Local<v8::Object> &p_value);
 
 public:
-
 	/****** VARIANT <-> JAVASCRIPT ******/
 
 	// Convert a Variant type to a V8JavaScript type
-	static v8::Local<v8::Value> variant_to_js(v8::Isolate* p_isolate, const Variant &p_var);
+	static v8::Local<v8::Value> variant_to_js(v8::Isolate *p_isolate, const Variant &p_var);
 	// Convert a V8JavaScript type to a Variant type
-	static Variant js_to_variant(v8::Isolate* p_isolate, const v8::Local<v8::Value> &p_value);
+	static Variant js_to_variant(v8::Isolate *p_isolate, const v8::Local<v8::Value> &p_value);
 	// Convert a String to a Variant type
 	static Variant::Type type_from_string(const String &p_type);
 
 	/****** JAVASCRIPT GLOBAL FUNCTIONS ******/
 
-	static void require(const v8::FunctionCallbackInfo<v8::Value>& p_args);
-	static void print(const v8::FunctionCallbackInfo<v8::Value>& p_args);
+	static void require(const v8::FunctionCallbackInfo<v8::Value> &p_args);
+	static void print(const v8::FunctionCallbackInfo<v8::Value> &p_args);
 
 	/****** BUILT-IN TYPES ******/
 	/* VECTOR2 */
-	static void Vector2_constructor(const v8::FunctionCallbackInfo<v8::Value>& p_args); // constructor
-	static void Vector2_add(const v8::FunctionCallbackInfo<v8::Value>& p_args);
-	static void Vector2_length(const v8::FunctionCallbackInfo<v8::Value>& p_args);
-	static void Vector2_length_squared(const v8::FunctionCallbackInfo<v8::Value>& p_args);
+	static void Vector2_constructor(const v8::FunctionCallbackInfo<v8::Value> &p_args); // constructor
+	static void Vector2_add(const v8::FunctionCallbackInfo<v8::Value> &p_args);
+	static void Vector2_length(const v8::FunctionCallbackInfo<v8::Value> &p_args);
+	static void Vector2_length_squared(const v8::FunctionCallbackInfo<v8::Value> &p_args);
 };
 
 #endif

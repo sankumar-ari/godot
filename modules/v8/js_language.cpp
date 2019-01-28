@@ -28,14 +28,14 @@
 /*************************************************************************/
 
 #include "js_language.h"
-#include "class_db.h"
+#include "core/class_db.h"
+#include "core/core_string_names.h"
+#include "core/global_constants.h"
+#include "core/io/file_access_encrypted.h"
+#include "core/os/file_access.h"
 #include "core/os/os.h"
-#include "core_string_names.h"
-#include "global_constants.h"
-#include "io/file_access_encrypted.h"
 #include "js/global.js.h"
 #include "js_functions.h"
-#include "os/file_access.h"
 
 #include "libplatform/libplatform.h"
 #include "v8.h"
@@ -752,12 +752,12 @@ Ref<Script> JavaScriptInstance::get_script() const {
 	return script;
 }
 
-ScriptInstance::RPCMode JavaScriptInstance::get_rpc_mode(const StringName &p_method) const {
-	return RPC_MODE_DISABLED;
+MultiplayerAPI::RPCMode JavaScriptInstance::get_rpc_mode(const StringName &p_method) const {
+	return MultiplayerAPI::RPC_MODE_DISABLED;
 }
 
-ScriptInstance::RPCMode JavaScriptInstance::get_rset_mode(const StringName &p_variable) const {
-	return RPC_MODE_DISABLED;
+MultiplayerAPI::RPCMode JavaScriptInstance::get_rset_mode(const StringName &p_variable) const {
+	return MultiplayerAPI::RPC_MODE_DISABLED;
 }
 
 ScriptLanguage *JavaScriptInstance::get_language() {
@@ -814,7 +814,7 @@ void JavaScriptLanguage::Bindings::js_method(const v8::FunctionCallbackInfo<v8::
 	Vector<Variant *> args;
 	args.resize(p_args.Length());
 	for (int i = 0; i < args.size(); i++) {
-		args[i] = new Variant(JavaScriptFunctions::js_to_variant(isolate, p_args[i]));
+		args.set(i, new Variant(JavaScriptFunctions::js_to_variant(isolate, p_args[i])));
 	}
 
 	Variant::CallError err;
@@ -882,7 +882,7 @@ void JavaScriptLanguage::Bindings::js_builtin_constructor(const v8::FunctionCall
 	args.resize(p_args.Length());
 	for (int i = 0; i < p_args.Length(); i++) {
 		Variant *arg = new Variant(JavaScriptFunctions::js_to_variant(isolate, p_args[i]));
-		args[i] = arg;
+		args.set(i, arg);
 	}
 
 	Variant::CallError err;
@@ -915,7 +915,7 @@ void JavaScriptLanguage::Bindings::js_builtin_method(const v8::FunctionCallbackI
 	Vector<Variant *> args;
 	args.resize(p_args.Length());
 	for (int i = 0; i < p_args.Length(); i++) {
-		args[i] = &JavaScriptFunctions::js_to_variant(isolate, p_args[i]);
+		args.set(i, &JavaScriptFunctions::js_to_variant(isolate, p_args[i]));
 	}
 
 	Variant::CallError err;
@@ -935,8 +935,8 @@ void JavaScriptLanguage::Bindings::js_builtin_getter(v8::Local<v8::Name> p_prop,
 
 	Variant *obj = static_cast<Variant *>(v8::Local<v8::External>::Cast(p_args.This()->GetInternalField(0))->Value());
 
-	if (Variant::has_numeric_constant(obj->get_type(), *prop)) {
-		int result = Variant::get_numeric_constant_value(obj->get_type(), *prop);
+	if (Variant::has_constant(obj->get_type(), *prop)) {
+		int result = Variant::get_constant_value(obj->get_type(), *prop);
 		p_args.GetReturnValue().Set(result);
 		return;
 	}

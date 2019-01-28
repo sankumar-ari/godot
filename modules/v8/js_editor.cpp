@@ -165,7 +165,7 @@ Ref<Script> JavaScriptLanguage::get_template(const String &p_class_name, const S
 	return script;
 }
 
-bool JavaScriptLanguage::validate(const String &p_script, int &r_line_error, int &r_col_error, String &r_test_error, const String &p_path, List<String> *r_functions) const {
+bool JavaScriptLanguage::validate(const String &p_script, int &r_line_error, int &r_col_error, String &r_test_error, const String &p_path, List<String> *r_functions, List<Warning> *r_warnings, Set<int> *r_safe_lines) const {
 
 	using namespace v8;
 

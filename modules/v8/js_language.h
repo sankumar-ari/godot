@@ -30,12 +30,12 @@
 #ifndef JS_LANGUAGE_H
 #define JS_LANGUAGE_H
 
-#include "io/resource_loader.h"
-#include "io/resource_saver.h"
-#include "list.h"
-#include "script_language.h"
-#include "ustring.h"
-#include "vector.h"
+#include "core/io/resource_loader.h"
+#include "core/io/resource_saver.h"
+#include "core/list.h"
+#include "core/script_language.h"
+#include "core/ustring.h"
+#include "core/vector.h"
 
 #include "libplatform/libplatform.h"
 #include "v8.h"
@@ -91,6 +91,7 @@ public:
 	virtual MethodInfo get_method_info(const StringName &p_method) const;
 
 	virtual bool is_tool() const;
+	virtual bool is_valid() const { return true; }
 
 	virtual String get_node_type() const;
 
@@ -155,8 +156,8 @@ public:
 
 	virtual bool is_placeholder() const { return false; }
 
-	virtual RPCMode get_rpc_mode(const StringName &p_method) const;
-	virtual RPCMode get_rset_mode(const StringName &p_variable) const;
+	virtual MultiplayerAPI::RPCMode get_rpc_mode(const StringName &p_method) const;
+	virtual MultiplayerAPI::RPCMode get_rset_mode(const StringName &p_variable) const;
 
 	virtual ScriptLanguage *get_language();
 	JavaScriptInstance();
@@ -213,7 +214,7 @@ public:
 	virtual void get_comment_delimiters(List<String> *p_delimiters) const;
 	virtual void get_string_delimiters(List<String> *p_delimiters) const;
 	virtual Ref<Script> get_template(const String &p_class_name, const String &p_base_class_name) const;
-	virtual bool validate(const String &p_script, int &r_line_error, int &r_col_error, String &r_test_error, const String &p_path = "", List<String> *r_functions = NULL) const;
+	virtual bool validate(const String &p_script, int &r_line_error, int &r_col_error, String &r_test_error, const String &p_path = "", List<String> *r_functions = NULL, List<Warning> *r_warnings = NULL, Set<int> *r_safe_lines = NULL) const;
 	virtual Script *create_script() const;
 	virtual bool has_named_classes() const;
 	virtual int find_function(const String &p_function, const String &p_code) const;
