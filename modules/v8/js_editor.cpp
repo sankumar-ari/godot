@@ -329,3 +329,9 @@ Error JavaScriptLanguage::lookup_code(const String &p_code, const String &p_symb
 }
 
 #endif // TOOLS_ENABLED
+
+// #include "debugger/inspector_io.cc"
+// #include "debugger/inspector_socket.cc"
+// #include "debugger/inspector_socket_server.cc"
+// #include "debugger/http_parser.cc"
+// #include "debugger/inspector_agent.cc"

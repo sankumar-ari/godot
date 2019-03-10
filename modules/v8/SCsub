@@ -1,20 +1,27 @@
 #!/usr/bin/env python
 
+import glob
 Import('env')
 
-env.add_source_files(env.modules_sources, "*.cpp")
+source_files = glob.glob("*.cpp") + ["debugger/inspector_io.cc", "debugger/inspector_socket.cc",
+                                     "debugger/inspector_socket_server.cc", "debugger/http_parser.cc", "debugger/inspector_agent.cc"]
+env.add_source_files(env.modules_sources, source_files)
 
 libs = [
-	"v8",
-	"v8_libbase",
-	"v8_libplatform",
-	"DbgHelp"
+    "v8",
+    "v8_libbase",
+    "v8_libplatform",
+    "libuv",
+    "DbgHelp",
+    "Userenv"
 ]
 
 env.make_js_header("js/global.js")
 
-env.Append(CPPPATH=["#modules/v8/thirdparty/include"])
-env.Append(LIBPATH=["#modules/v8/thirdparty"])
+env.Append(CPPPATH=["#modules/v8/thirdparty/v8/include",
+                    "#modules/v8/thirdparty/libuv/include", "#modules/v8/debugger"])
+env.Append(LIBPATH=["#modules/v8/thirdparty/v8",
+                    "#modules/v8/thirdparty/libuv"])
 env.Append(LINKFLAGS=[l+".lib" for l in libs])
 
 Export('env')

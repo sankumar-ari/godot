@@ -37,16 +37,16 @@
 #include "js/global.js.h"
 #include "js_functions.h"
 
+#include "debugger/inspector_agent.h"
 #include "libplatform/libplatform.h"
 #include "v8.h"
-
 JavaScriptLanguage *JavaScriptLanguage::singleton = NULL;
 
 void JavaScriptLanguage::_add_class(const StringName &p_type, const v8::Local<v8::FunctionTemplate> &p_parent) {
 
 	String type(p_type);
 	// Ignore proxy classes and singletons
-	if (type.begins_with("_")) return;
+	//if (type.begins_with("_")) return;
 	if (Engine::get_singleton()->has_singleton(type)) return;
 
 	// Change object name to avoid conflict with V8JavaScript's own Object
@@ -250,6 +250,8 @@ void JavaScriptLanguage::init() {
 		v8::String::Utf8Value ex(isolate, trycatch.Exception());
 		ERR_PRINT(*ex);
 	}
+	//inspector::Agent *agent = new inspector::Agent("localhost", "c:/temp/frontend.url");
+	//agent->Start(isolate, platform, nullptr);
 }
 
 void JavaScriptLanguage::finish() {
@@ -689,13 +691,15 @@ bool JavaScriptInstance::has_method(const StringName &p_method) const {
 }
 
 Variant JavaScriptInstance::call(const StringName &p_method, const Variant **p_args, int p_argcount, Variant::CallError &r_error) {
-
+	if ("_unhandled_input" == p_method) {
+		r_error.error = Variant::CallError::CALL_OK;
+		return Variant();
+	}
 	if (!compiled) {
 
 		r_error.error = Variant::CallError::CALL_ERROR_INSTANCE_IS_NULL;
 		return Variant();
 	}
-
 	v8::Isolate::Scope isolate_scope(isolate);
 	v8::HandleScope handle_scole(isolate);
 
@@ -710,7 +714,9 @@ Variant JavaScriptInstance::call(const StringName &p_method, const Variant **p_a
 		r_error.error = Variant::CallError::CALL_ERROR_INVALID_METHOD;
 		return Variant();
 	}
-
+	v8::String::Utf8Value name(isolate, inst->GetConstructorName());
+	WARN_PRINT(*name);
+	WARN_PRINT(m.utf8().get_data());
 	v8::Local<v8::Value> args[20];
 	for (int i = 0; i < p_argcount && i < 20; i++) {
 		args[i] = JavaScriptFunctions::variant_to_js(isolate, *(p_args[i]));
@@ -779,17 +785,31 @@ JavaScriptInstance::~JavaScriptInstance() {
 }
 
 void JavaScriptLanguage::Bindings::js_constructor(const v8::FunctionCallbackInfo<v8::Value> &p_args) {
-
+	auto isolate = p_args.GetIsolate();
 	if (!p_args.IsConstructCall()) {
-		p_args.GetIsolate()->ThrowException(v8::String::NewFromUtf8(p_args.GetIsolate(), "Can't call type as a function"));
+		p_args.GetIsolate()->ThrowException(v8::String::NewFromUtf8(isolate, "Can't call type as a function"));
 		return;
 	}
 
+	v8::String::Utf8Value c(isolate, p_args.This()->GetConstructorName());
+	String class_name(*c);
+	WARN_PRINT(class_name.utf8().get_data());
+
 	if (p_args.Length() == 1) {
 		p_args.This()->SetInternalField(0, p_args[0]);
+		WARN_PRINT("constructed internal");
+	} else if (ClassDB::can_instance(class_name)) {
+		Object *obj = ClassDB::instance(class_name);
+		p_args.This()
+				->SetInternalField(0, v8::External::New(isolate, obj));
+		WARN_PRINT("constructed and set");
+	} else {
+		WARN_PRINT("constructed and not set");
 	}
 	// Set the object as JS created by default
-	p_args.This()->SetInternalField(1, v8::Boolean::New(p_args.GetIsolate(), true));
+	p_args.This()
+			->SetInternalField(1, v8::Boolean::New(isolate, true));
+	WARN_PRINT("constructed ");
 }
 
 void JavaScriptLanguage::Bindings::js_method(const v8::FunctionCallbackInfo<v8::Value> &p_args) {
@@ -889,7 +909,7 @@ void JavaScriptLanguage::Bindings::js_builtin_constructor(const v8::FunctionCall
 	Variant result = Variant::construct(type, (const Variant **)args.ptr(), args.size(), err);
 
 	if (err.error != Variant::CallError::CALL_OK) {
-		isolate->ThrowException(v8::String::NewFromUtf8(isolate, "Error calling constructor"));
+		isolate->ThrowException(v8::String::NewFromUtf8(isolate, ("Error calling constructor " + type_name).utf8().get_data()));
 		return;
 	}
 

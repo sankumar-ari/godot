@@ -74,18 +74,43 @@ v8::Local<v8::Value> JavaScriptFunctions::variant_to_js(v8::Isolate *p_isolate, 
 		} break;
 		case Variant::OBJECT: {
 			Object *obj = (Object *)p_var;
+			Reference *ref = Object::cast_to<Reference>(obj);
 
+			if (ref) {
+				// Unsafe refcount increment. The managed instance also counts as a reference.
+				// This way if the unmanaged world has no references to our owner
+				// but the managed instance is alive, the refcount will be 1 instead of 0.
+				// See: _GodotSharp::_dispose_object(Object *p_object)
+
+				ref->reference();
+			}
 			if (obj) {
+				WARN_PRINT(obj->get_class().utf8().get_data());
 				v8::Local<v8::Context> ctx = p_isolate->GetCurrentContext();
-				v8::Local<v8::Function> constructor = v8::Local<v8::Function>::Cast(ctx->Global()->Get(
-						v8::String::NewFromUtf8(p_isolate, obj->get_class().utf8().get_data())));
+				auto cv = ctx->Global()->Get(
+						v8::String::NewFromUtf8(p_isolate, obj->get_class().utf8().get_data()));
+				v8::Local<v8::Function> constructor;
+				if (cv.IsEmpty()) {
+					WARN_PRINT(obj->get_class().utf8().get_data());
+					WARN_PRINT("returning null");
+					val = v8::Null(p_isolate);
 
-				// Call the constructor with the object as argument
-				v8::Local<v8::Value> cargs[] = { v8::External::New(p_isolate, obj) };
-				v8::Local<v8::Object> instance = v8::Local<v8::Object>::Cast(constructor->CallAsConstructor(context, 1, cargs).ToLocalChecked());
-				// Set as external to V8JavaScript
-				instance->SetInternalField(1, v8::Boolean::New(p_isolate, false));
-				val = instance;
+				} else {
+					constructor = v8::Local<v8::Function>::Cast(cv);
+					// Call the constructor with the object as argument
+					v8::Local<v8::Value> cargs[] = { v8::External::New(p_isolate, obj) };
+					auto maybeobj = constructor->CallAsConstructor(context, 1, cargs);
+					if (maybeobj.IsEmpty()) {
+						WARN_PRINT(obj->get_class().utf8().get_data());
+						WARN_PRINT("returning null");
+						val = v8::Null(p_isolate);
+					} else {
+						v8::Local<v8::Object> instance = v8::Local<v8::Object>::Cast(maybeobj.ToLocalChecked());
+						// Set as external to V8JavaScript
+						instance->SetInternalField(1, v8::Boolean::New(p_isolate, false));
+						val = instance;
+					}
+				}
 			}
 		} break;
 			// Math types
@@ -151,6 +176,12 @@ Variant JavaScriptFunctions::js_to_variant(v8::Isolate *p_isolate, const v8::Loc
 		if (js_obj->InternalFieldCount() == 2) {
 			if (js_obj->GetInternalField(1)->IsBoolean()) {
 				Object *obj = unwrap_object(js_obj);
+				Reference *ref = Object::cast_to<Reference>(obj);
+
+				if (ref) {
+					Ref<Reference> ref(ref);
+					return Variant(ref);
+				}
 				return Variant(obj);
 			} else {
 				Variant *var = unwrap_variant(js_obj);
