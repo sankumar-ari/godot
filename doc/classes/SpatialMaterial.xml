@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<class name="SpatialMaterial" inherits="Material" category="Core" version="3.1">
+<class name="SpatialMaterial" inherits="Material" category="Core" version="3.2">
 	<brief_description>
 		Default 3D rendering material.
 	</brief_description>
@@ -9,8 +9,6 @@
 	<tutorials>
 		<link>https://docs.godotengine.org/en/latest/tutorials/3d/spatial_material.html</link>
 	</tutorials>
-	<demos>
-	</demos>
 	<methods>
 	</methods>
 	<members>
@@ -121,6 +119,8 @@
 		</member>
 		<member name="flags_use_point_size" type="bool" setter="set_flag" getter="get_flag">
 			If [code]true[/code], render point size can be changed. Note: this is only effective for objects whose geometry is point-based rather than triangle-based. See also [member params_point_size].
+		</member>
+		<member name="flags_use_shadow_to_opacity" type="bool" setter="set_flag" getter="get_flag">
 		</member>
 		<member name="flags_vertex_lighting" type="bool" setter="set_flag" getter="get_flag">
 			If [code]true[/code], lighting is calculated per vertex rather than per pixel. This may increase performance on low-end devices. Default value: [code]false[/code].
@@ -392,7 +392,9 @@
 		</constant>
 		<constant name="FLAG_ENSURE_CORRECT_NORMALS" value="16" enum="Flags">
 		</constant>
-		<constant name="FLAG_MAX" value="18" enum="Flags">
+		<constant name="FLAG_USE_SHADOW_TO_OPACITY" value="18" enum="Flags">
+		</constant>
+		<constant name="FLAG_MAX" value="19" enum="Flags">
 		</constant>
 		<constant name="DIFFUSE_BURLEY" value="0" enum="DiffuseMode">
 			Default diffuse scattering algorithm.

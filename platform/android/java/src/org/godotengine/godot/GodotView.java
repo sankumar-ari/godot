@@ -31,16 +31,15 @@
 package org.godotengine.godot;
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.ContextWrapper;
 import android.graphics.PixelFormat;
+import android.hardware.input.InputManager;
 import android.opengl.GLSurfaceView;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.view.InputDevice;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
-import android.content.ContextWrapper;
-import android.view.InputDevice;
-import android.hardware.input.InputManager;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -51,7 +50,6 @@ import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.egl.EGLContext;
 import javax.microedition.khronos.egl.EGLDisplay;
 import javax.microedition.khronos.opengles.GL10;
-
 import org.godotengine.godot.input.InputManagerCompat;
 import org.godotengine.godot.input.InputManagerCompat.InputDeviceListener;
 /**
@@ -111,6 +109,18 @@ public class GodotView extends GLSurfaceView implements InputDeviceListener {
 	public GodotView(Context context, boolean translucent, int depth, int stencil) {
 		super(context);
 		init(translucent, depth, stencil);
+	}
+
+	public void initInputDevices() {
+		/* initially add input devices*/
+		int[] deviceIds = mInputManager.getInputDeviceIds();
+		for (int deviceId : deviceIds) {
+			InputDevice device = mInputManager.getInputDevice(deviceId);
+			if (DEBUG) {
+				Log.v("GodotView", String.format("init() deviceId:%d, Name:%s\n", deviceId, device.getName()));
+			}
+			onInputDeviceAdded(deviceId);
+		}
 	}
 
 	@SuppressLint("ClickableViewAccessibility")
@@ -219,36 +229,42 @@ public class GodotView extends GLSurfaceView implements InputDeviceListener {
 		// Check if the device has not been already added
 		if (id < 0) {
 			InputDevice device = mInputManager.getInputDevice(deviceId);
+			//device can be null if deviceId is not found
+			if (device != null) {
+				int sources = device.getSources();
+				if (((sources & InputDevice.SOURCE_GAMEPAD) == InputDevice.SOURCE_GAMEPAD) ||
+						((sources & InputDevice.SOURCE_JOYSTICK) == InputDevice.SOURCE_JOYSTICK)) {
+					id = joy_devices.size();
 
-			id = joy_devices.size();
+					joystick joy = new joystick();
+					joy.device_id = deviceId;
+					joy.name = device.getName();
+					joy.axes = new ArrayList<InputDevice.MotionRange>();
+					joy.hats = new ArrayList<InputDevice.MotionRange>();
 
-			joystick joy = new joystick();
-			joy.device_id = deviceId;
-			joy.name = device.getName();
-			joy.axes = new ArrayList<InputDevice.MotionRange>();
-			joy.hats = new ArrayList<InputDevice.MotionRange>();
+					List<InputDevice.MotionRange> ranges = device.getMotionRanges();
+					Collections.sort(ranges, new RangeComparator());
 
-			List<InputDevice.MotionRange> ranges = device.getMotionRanges();
-			Collections.sort(ranges, new RangeComparator());
+					for (InputDevice.MotionRange range : ranges) {
+						if (range.getAxis() == MotionEvent.AXIS_HAT_X || range.getAxis() == MotionEvent.AXIS_HAT_Y) {
+							joy.hats.add(range);
+						} else {
+							joy.axes.add(range);
+						}
+					}
 
-			for (InputDevice.MotionRange range : ranges) {
-				if (range.getAxis() == MotionEvent.AXIS_HAT_X || range.getAxis() == MotionEvent.AXIS_HAT_Y) {
-					joy.hats.add(range);
-				} else {
-					joy.axes.add(range);
+					joy_devices.add(joy);
+
+					final int device_id = id;
+					final String name = joy.name;
+					queueEvent(new Runnable() {
+						@Override
+						public void run() {
+							GodotLib.joyconnectionchanged(device_id, true, name);
+						}
+					});
 				}
 			}
-
-			joy_devices.add(joy);
-
-			final int device_id = id;
-			final String name = joy.name;
-			queueEvent(new Runnable() {
-				@Override
-				public void run() {
-					GodotLib.joyconnectionchanged(device_id, true, name);
-				}
-			});
 		}
 	}
 
@@ -271,6 +287,8 @@ public class GodotView extends GLSurfaceView implements InputDeviceListener {
 
 	@Override
 	public void onInputDeviceChanged(int deviceId) {
+		onInputDeviceRemoved(deviceId);
+		onInputDeviceAdded(deviceId);
 	}
 	@Override
 	public boolean onKeyUp(final int keyCode, KeyEvent event) {

@@ -123,6 +123,31 @@ const char *CharString::get_data() const {
 		return "";
 }
 
+CharString &CharString::operator=(const char *p_cstr) {
+
+	copy_from(p_cstr);
+	return *this;
+}
+
+void CharString::copy_from(const char *p_cstr) {
+
+	if (!p_cstr) {
+		resize(0);
+		return;
+	}
+
+	size_t len = strlen(p_cstr);
+
+	if (len == 0) {
+		resize(0);
+		return;
+	}
+
+	resize(len + 1); // include terminating null char
+
+	strcpy(ptrw(), p_cstr);
+}
+
 void String::copy_from(const char *p_cstr) {
 
 	if (!p_cstr) {
@@ -1700,6 +1725,45 @@ int64_t String::hex_to_int64(bool p_with_prefix) const {
 	return hex * sign;
 }
 
+int64_t String::bin_to_int64(bool p_with_prefix) const {
+
+	if (p_with_prefix && length() < 3)
+		return 0;
+
+	const CharType *s = ptr();
+
+	int64_t sign = s[0] == '-' ? -1 : 1;
+
+	if (sign < 0) {
+		s++;
+	}
+
+	if (p_with_prefix) {
+		if (s[0] != '0' || s[1] != 'b')
+			return 0;
+		s += 2;
+	}
+
+	int64_t binary = 0;
+
+	while (*s) {
+
+		CharType c = LOWERCASE(*s);
+		int64_t n;
+		if (c == '0' || c == '1') {
+			n = c - '0';
+		} else {
+			return 0;
+		}
+
+		binary *= 2;
+		binary += n;
+		s++;
+	}
+
+	return binary * sign;
+}
+
 int String::to_int() const {
 
 	if (length() == 0)
@@ -3038,29 +3102,16 @@ String String::strip_edges(bool left, bool right) const {
 
 String String::strip_escapes() const {
 
-	int len = length();
-	int beg = 0, end = len;
-
+	String new_string;
 	for (int i = 0; i < length(); i++) {
 
-		if (operator[](i) <= 31)
-			beg++;
-		else
-			break;
+		// Escape characters on first page of the ASCII table, before 32 (Space).
+		if (operator[](i) < 32)
+			continue;
+		new_string += operator[](i);
 	}
 
-	for (int i = (int)(length() - 1); i >= 0; i--) {
-
-		if (operator[](i) <= 31)
-			end--;
-		else
-			break;
-	}
-
-	if (beg == 0 && end == len)
-		return *this;
-
-	return substr(beg, end - beg);
+	return new_string;
 }
 
 String String::lstrip(const String &p_chars) const {
@@ -3746,6 +3797,24 @@ String String::path_to(const String &p_path) const {
 bool String::is_valid_html_color() const {
 
 	return Color::html_is_valid(*this);
+}
+
+bool String::is_valid_filename() const {
+
+	String stripped = strip_edges();
+	if (*this != stripped) {
+		return false;
+	}
+
+	if (stripped == String()) {
+		return false;
+	}
+
+	if (find(":") != -1 || find("/") != -1 || find("\\") != -1 || find("?") != -1 || find("*") != -1 || find("\"") != -1 || find("|") != -1 || find("%") != -1 || find("<") != -1 || find(">") != -1) {
+		return false;
+	} else {
+		return true;
+	}
 }
 
 bool String::is_valid_ip_address() const {

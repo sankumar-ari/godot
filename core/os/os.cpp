@@ -220,6 +220,16 @@ int OS::get_virtual_keyboard_height() const {
 	return 0;
 }
 
+void OS::set_cursor_shape(CursorShape p_shape) {
+}
+
+OS::CursorShape OS::get_cursor_shape() const {
+	return CURSOR_ARROW;
+}
+
+void OS::set_custom_mouse_cursor(const RES &p_cursor, CursorShape p_shape, const Vector2 &p_hotspot) {
+}
+
 void OS::print_all_resources(String p_to_file) {
 
 	ERR_FAIL_COND(p_to_file != "" && _OSPRF);
@@ -453,6 +463,9 @@ void OS::_ensure_user_data_dir() {
 	ERR_FAIL_COND(err != OK);
 
 	memdelete(da);
+}
+
+void OS::set_native_icon(const String &p_filename) {
 }
 
 void OS::set_icon(const Ref<Image> &p_icon) {

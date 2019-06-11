@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<class name="Mesh" inherits="Resource" category="Core" version="3.1">
+<class name="Mesh" inherits="Resource" category="Core" version="3.2">
 	<brief_description>
 		A [Resource] that contains vertex-array based geometry.
 	</brief_description>
@@ -8,8 +8,6 @@
 	</description>
 	<tutorials>
 	</tutorials>
-	<demos>
-	</demos>
 	<methods>
 		<method name="create_convex_shape" qualifiers="const">
 			<return type="Shape">
@@ -52,7 +50,7 @@
 			<return type="int">
 			</return>
 			<description>
-				Return the amount of surfaces that the [code]Mesh[/code] holds.
+				Returns the amount of surfaces that the [Mesh] holds.
 			</description>
 		</method>
 		<method name="surface_get_arrays" qualifiers="const">
@@ -79,7 +77,18 @@
 			<argument index="0" name="surf_idx" type="int">
 			</argument>
 			<description>
-				Return a [Material] in a given surface. Surface is rendered using this material.
+				Returns a [Material] in a given surface. Surface is rendered using this material.
+			</description>
+		</method>
+		<method name="surface_set_material">
+			<return type="void">
+			</return>
+			<argument index="0" name="surf_idx" type="int">
+			</argument>
+			<argument index="1" name="material" type="Material">
+			</argument>
+			<description>
+				Set a [Material] for a given surface. Surface will be rendered using this material.
 			</description>
 		</method>
 	</methods>

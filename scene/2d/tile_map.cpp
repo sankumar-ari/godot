@@ -202,47 +202,27 @@ void TileMap::_fix_cell_transform(Transform2D &xform, const Cell &p_cell, const 
 	Size2 s = p_sc;
 	Vector2 offset = p_offset;
 
-	if (tile_origin == TILE_ORIGIN_BOTTOM_LEFT)
-		offset.y += cell_size.y;
-	else if (tile_origin == TILE_ORIGIN_CENTER) {
-		offset += cell_size / 2;
-	}
-
-	if (s.y > s.x) {
-		if ((p_cell.flip_h && (p_cell.flip_v || p_cell.transpose)) || (p_cell.flip_v && !p_cell.transpose))
-			offset.y += s.y - s.x;
-	} else if (s.y < s.x) {
-		if ((p_cell.flip_v && (p_cell.flip_h || p_cell.transpose)) || (p_cell.flip_h && !p_cell.transpose))
-			offset.x += s.x - s.y;
-	}
-
 	if (p_cell.transpose) {
 		SWAP(xform.elements[0].x, xform.elements[0].y);
 		SWAP(xform.elements[1].x, xform.elements[1].y);
 		SWAP(offset.x, offset.y);
 		SWAP(s.x, s.y);
 	}
+
 	if (p_cell.flip_h) {
 		xform.elements[0].x = -xform.elements[0].x;
 		xform.elements[1].x = -xform.elements[1].x;
-		if (tile_origin == TILE_ORIGIN_TOP_LEFT || tile_origin == TILE_ORIGIN_BOTTOM_LEFT)
-			offset.x = s.x - offset.x;
-		else if (tile_origin == TILE_ORIGIN_CENTER)
-			offset.x = s.x - offset.x / 2;
+		offset.x = s.x - offset.x;
 	}
+
 	if (p_cell.flip_v) {
 		xform.elements[0].y = -xform.elements[0].y;
 		xform.elements[1].y = -xform.elements[1].y;
-		if (tile_origin == TILE_ORIGIN_TOP_LEFT)
-			offset.y = s.y - offset.y;
-		else if (tile_origin == TILE_ORIGIN_BOTTOM_LEFT) {
-			offset.y += s.y;
-		} else if (tile_origin == TILE_ORIGIN_CENTER) {
-			offset.y += s.y;
-		}
+		offset.y = s.y - offset.y;
 	}
-	xform.elements[2].x += offset.x;
-	xform.elements[2].y += offset.y;
+
+	offset += cell_size / 2 - s / 2;
+	xform.elements[2] += offset;
 }
 
 void TileMap::update_dirty_quadrants() {
@@ -390,64 +370,25 @@ void TileMap::update_dirty_quadrants() {
 			rect.size.x += fp_adjust;
 			rect.size.y += fp_adjust;
 
-			if (rect.size.y > rect.size.x) {
-				if ((c.flip_h && (c.flip_v || c.transpose)) || (c.flip_v && !c.transpose))
-					tile_ofs.y += rect.size.y - rect.size.x;
-			} else if (rect.size.y < rect.size.x) {
-				if ((c.flip_v && (c.flip_h || c.transpose)) || (c.flip_h && !c.transpose))
-					tile_ofs.x += rect.size.x - rect.size.y;
-			}
-
-			/*	rect.size.x+=fp_adjust;
-			rect.size.y+=fp_adjust;*/
-
-			if (c.transpose)
+			if (c.transpose) {
 				SWAP(tile_ofs.x, tile_ofs.y);
+				rect.position.x += cell_size.x / 2 - rect.size.y / 2;
+				rect.position.y += cell_size.y / 2 - rect.size.x / 2;
+			} else {
+				rect.position += cell_size / 2 - rect.size / 2;
+			}
 
 			if (c.flip_h) {
 				rect.size.x = -rect.size.x;
 				tile_ofs.x = -tile_ofs.x;
 			}
+
 			if (c.flip_v) {
 				rect.size.y = -rect.size.y;
 				tile_ofs.y = -tile_ofs.y;
 			}
 
-			Vector2 center_ofs;
-
-			if (tile_origin == TILE_ORIGIN_TOP_LEFT) {
-				rect.position += tile_ofs;
-
-			} else if (tile_origin == TILE_ORIGIN_BOTTOM_LEFT) {
-
-				rect.position += tile_ofs;
-
-				if (c.transpose) {
-					if (c.flip_h)
-						rect.position.x -= cell_size.x;
-					else
-						rect.position.x += cell_size.x;
-				} else {
-					if (c.flip_v)
-						rect.position.y -= cell_size.y;
-					else
-						rect.position.y += cell_size.y;
-				}
-
-			} else if (tile_origin == TILE_ORIGIN_CENTER) {
-
-				rect.position += tile_ofs;
-
-				if (c.flip_h)
-					rect.position.x -= cell_size.x / 2;
-				else
-					rect.position.x += cell_size.x / 2;
-
-				if (c.flip_v)
-					rect.position.y -= cell_size.y / 2;
-				else
-					rect.position.y += cell_size.y / 2;
-			}
+			rect.position += tile_ofs;
 
 			Ref<Texture> normal_map = tile_set->tile_get_normal_map(c.id);
 			Color modulate = tile_set->tile_get_modulate(c.id);
@@ -471,7 +412,7 @@ void TileMap::update_dirty_quadrants() {
 
 						Vector2 shape_ofs = shapes[j].shape_transform.get_origin();
 
-						_fix_cell_transform(xform, c, shape_ofs + center_ofs, s);
+						_fix_cell_transform(xform, c, shape_ofs, s);
 
 						xform *= shapes[j].shape_transform.untranslated();
 
@@ -491,7 +432,7 @@ void TileMap::update_dirty_quadrants() {
 									shape_idx++;
 #ifdef DEBUG_ENABLED
 								} else {
-									print_error("The TileSet asigned to the TileMap " + get_name() + " has an invalid convex shape.");
+									print_error("The TileSet assigned to the TileMap " + get_name() + " has an invalid convex shape.");
 #endif
 								}
 							}
@@ -523,7 +464,7 @@ void TileMap::update_dirty_quadrants() {
 				if (navpoly.is_valid()) {
 					Transform2D xform;
 					xform.set_origin(offset.floor() + q.pos);
-					_fix_cell_transform(xform, c, npoly_ofs + center_ofs, s);
+					_fix_cell_transform(xform, c, npoly_ofs, s);
 
 					int pid = navigation->navpoly_add(navpoly, nav_rel * xform);
 
@@ -573,7 +514,7 @@ void TileMap::update_dirty_quadrants() {
 								}
 								Transform2D navxform;
 								navxform.set_origin(offset.floor());
-								_fix_cell_transform(navxform, c, npoly_ofs + center_ofs, s);
+								_fix_cell_transform(navxform, c, npoly_ofs, s);
 
 								vs->canvas_item_set_transform(debug_navigation_item, navxform);
 								vs->canvas_item_add_triangle_array(debug_navigation_item, indices, vertices, colors);
@@ -593,7 +534,7 @@ void TileMap::update_dirty_quadrants() {
 				Vector2 occluder_ofs = tile_set->tile_get_occluder_offset(c.id);
 				Transform2D xform;
 				xform.set_origin(offset.floor() + q.pos);
-				_fix_cell_transform(xform, c, occluder_ofs + center_ofs, s);
+				_fix_cell_transform(xform, c, occluder_ofs, s);
 
 				RID orid = VS::get_singleton()->canvas_light_occluder_create();
 				VS::get_singleton()->canvas_light_occluder_set_transform(orid, get_global_transform() * xform);
@@ -749,7 +690,10 @@ void TileMap::set_cellv(const Vector2 &p_pos, int p_tile, bool p_flip_x, bool p_
 
 void TileMap::_set_celld(const Vector2 &p_pos, const Dictionary &p_data) {
 
-	set_cell(p_pos.x, p_pos.y, p_data["id"], p_data["flip_h"], p_data["flip_y"], p_data["transpose"], p_data["auto_coord"]);
+	Variant v_pos_x = p_pos.x, v_pos_y = p_pos.y, v_tile = p_data["id"], v_flip_h = p_data["flip_h"], v_flip_v = p_data["flip_y"], v_transpose = p_data["transpose"], v_autotile_coord = p_data["auto_coord"];
+	const Variant *args[7] = { &v_pos_x, &v_pos_y, &v_tile, &v_flip_h, &v_flip_v, &v_transpose, &v_autotile_coord };
+	Variant::CallError ce;
+	call("set_cell", args, 7, ce);
 }
 
 void TileMap::set_cell(int p_x, int p_y, int p_tile, bool p_flip_x, bool p_flip_y, bool p_transpose, Vector2 p_autotile_coord) {
@@ -773,6 +717,7 @@ void TileMap::set_cell(int p_x, int p_y, int p_tile, bool p_flip_x, bool p_flip_
 		else
 			_make_quadrant_dirty(Q);
 
+		used_size_cache_dirty = true;
 		return;
 	}
 
@@ -923,8 +868,17 @@ void TileMap::update_cell_bitmask(int p_x, int p_y) {
 			_make_quadrant_dirty(Q);
 
 		} else if (tile_set->tile_get_tile_mode(id) == TileSet::SINGLE_TILE) {
+
 			E->get().autotile_coord_x = 0;
 			E->get().autotile_coord_y = 0;
+		} else if (tile_set->tile_get_tile_mode(id) == TileSet::ATLAS_TILE) {
+
+			if (tile_set->autotile_get_bitmask(id, Vector2(p_x, p_y)) == TileSet::BIND_CENTER) {
+				Vector2 coord = tile_set->atlastile_get_subtile_by_priority(id, this, Vector2(p_x, p_y));
+
+				E->get().autotile_coord_x = (int)coord.x;
+				E->get().autotile_coord_y = (int)coord.y;
+			}
 		}
 	}
 }
@@ -1391,18 +1345,21 @@ Vector2 TileMap::_map_to_world(int p_x, int p_y, bool p_ignore_ofs) const {
 	if (!p_ignore_ofs) {
 		switch (half_offset) {
 
-			case HALF_OFFSET_X: {
+			case HALF_OFFSET_X:
+			case HALF_OFFSET_NEGATIVE_X: {
 				if (ABS(p_y) & 1) {
 
-					ret += get_cell_transform()[0] * 0.5;
+					ret += get_cell_transform()[0] * (half_offset == HALF_OFFSET_X ? 0.5 : -0.5);
 				}
 			} break;
-			case HALF_OFFSET_Y: {
+			case HALF_OFFSET_Y:
+			case HALF_OFFSET_NEGATIVE_Y: {
 				if (ABS(p_x) & 1) {
-					ret += get_cell_transform()[1] * 0.5;
+					ret += get_cell_transform()[1] * (half_offset == HALF_OFFSET_Y ? 0.5 : -0.5);
 				}
 			} break;
-			default: {}
+			default: {
+			}
 		}
 	}
 	return ret;
@@ -1462,12 +1419,23 @@ Vector2 TileMap::world_to_map(const Vector2 &p_pos) const {
 				ret.x -= 0.5;
 			}
 		} break;
+		case HALF_OFFSET_NEGATIVE_X: {
+			if (ret.y > 0 ? int(ret.y) & 1 : (int(ret.y) - 1) & 1) {
+				ret.x += 0.5;
+			}
+		} break;
 		case HALF_OFFSET_Y: {
 			if (ret.x > 0 ? int(ret.x) & 1 : (int(ret.x) - 1) & 1) {
 				ret.y -= 0.5;
 			}
 		} break;
-		default: {}
+		case HALF_OFFSET_NEGATIVE_Y: {
+			if (ret.x > 0 ? int(ret.x) & 1 : (int(ret.x) - 1) & 1) {
+				ret.y += 0.5;
+			}
+		} break;
+		default: {
+		}
 	}
 
 	// Account for precision errors on the border (GH-23250).
@@ -1677,7 +1645,7 @@ void TileMap::_bind_methods() {
 	ADD_PROPERTY(PropertyInfo(Variant::VECTOR2, "cell_size", PROPERTY_HINT_RANGE, "1,8192,1"), "set_cell_size", "get_cell_size");
 	ADD_PROPERTY(PropertyInfo(Variant::INT, "cell_quadrant_size", PROPERTY_HINT_RANGE, "1,128,1"), "set_quadrant_size", "get_quadrant_size");
 	ADD_PROPERTY(PropertyInfo(Variant::TRANSFORM2D, "cell_custom_transform"), "set_custom_transform", "get_custom_transform");
-	ADD_PROPERTY(PropertyInfo(Variant::INT, "cell_half_offset", PROPERTY_HINT_ENUM, "Offset X,Offset Y,Disabled"), "set_half_offset", "get_half_offset");
+	ADD_PROPERTY(PropertyInfo(Variant::INT, "cell_half_offset", PROPERTY_HINT_ENUM, "Offset X,Offset Y,Disabled,Offset Negative X,Offset Negative Y"), "set_half_offset", "get_half_offset");
 	ADD_PROPERTY(PropertyInfo(Variant::INT, "cell_tile_origin", PROPERTY_HINT_ENUM, "Top Left,Center,Bottom Left"), "set_tile_origin", "get_tile_origin");
 	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "cell_y_sort"), "set_y_sort_mode", "is_y_sort_mode_enabled");
 	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "cell_clip_uv"), "set_clip_uv", "get_clip_uv");
@@ -1703,6 +1671,8 @@ void TileMap::_bind_methods() {
 	BIND_ENUM_CONSTANT(HALF_OFFSET_X);
 	BIND_ENUM_CONSTANT(HALF_OFFSET_Y);
 	BIND_ENUM_CONSTANT(HALF_OFFSET_DISABLED);
+	BIND_ENUM_CONSTANT(HALF_OFFSET_NEGATIVE_X);
+	BIND_ENUM_CONSTANT(HALF_OFFSET_NEGATIVE_Y);
 
 	BIND_ENUM_CONSTANT(TILE_ORIGIN_TOP_LEFT);
 	BIND_ENUM_CONSTANT(TILE_ORIGIN_CENTER);

@@ -15,7 +15,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ukrainian (Godot Engine)\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2019-03-08 15:04+0000\n"
+"PO-Revision-Date: 2019-04-29 08:48+0000\n"
 "Last-Translator: Yuri Chornoivan <yurchor@ukr.net>\n"
 "Language-Team: Ukrainian <https://hosted.weblate.org/projects/godot-engine/"
 "godot/uk/>\n"
@@ -25,7 +25,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
 "%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
-"X-Generator: Weblate 3.5.1-dev\n"
+"X-Generator: Weblate 3.6.1\n"
 
 #: core/math/expression.cpp modules/gdscript/gdscript_functions.cpp
 #: modules/visual_script/visual_script_builtin_funcs.cpp
@@ -163,12 +163,18 @@ msgid "Animation Playback Track"
 msgstr "Доріжка відтворення анімації"
 
 #: editor/animation_track_editor.cpp
-msgid "Add Track"
-msgstr "Додати доріжку"
+#, fuzzy
+msgid "Animation length (frames)"
+msgstr "Тривалість анімації (у секундах)"
 
 #: editor/animation_track_editor.cpp
-msgid "Animation Length Time (seconds)"
+#, fuzzy
+msgid "Animation length (seconds)"
 msgstr "Тривалість анімації (у секундах)"
+
+#: editor/animation_track_editor.cpp
+msgid "Add Track"
+msgstr "Додати доріжку"
 
 #: editor/animation_track_editor.cpp
 msgid "Animation Looping"
@@ -425,12 +431,20 @@ msgstr ""
 "Групувати доріжки за вузлами або показувати їх у форматі простого списку."
 
 #: editor/animation_track_editor.cpp
-msgid "Snap (s): "
-msgstr "Прилипання (с): "
+msgid "Snap:"
+msgstr "Прилипання:"
 
 #: editor/animation_track_editor.cpp
 msgid "Animation step value."
 msgstr "Значення кроку анімації."
+
+#: editor/animation_track_editor.cpp
+msgid "Seconds"
+msgstr "Секунди"
+
+#: editor/animation_track_editor.cpp
+msgid "FPS"
+msgstr "Кадри за секунду"
 
 #: editor/animation_track_editor.cpp editor/editor_properties.cpp
 #: editor/plugins/polygon_2d_editor_plugin.cpp
@@ -1371,33 +1385,31 @@ msgid "Packing"
 msgstr "Пакування"
 
 #: editor/editor_export.cpp
-#, fuzzy
 msgid ""
 "Target platform requires 'ETC' texture compression for GLES2. Enable 'Import "
 "Etc' in Project Settings."
 msgstr ""
 "Платформа призначення потребує стискання текстур «ETC» для GLES2. Увімкніть "
-"підтримку у параметрах проекту."
+"пункт «Імпортувати ETC» у параметрах проекту."
 
 #: editor/editor_export.cpp
-#, fuzzy
 msgid ""
 "Target platform requires 'ETC2' texture compression for GLES3. Enable "
 "'Import Etc 2' in Project Settings."
 msgstr ""
-"Платформа призначення потребує стискання текстур «ETC» для GLES2. Увімкніть "
-"підтримку у параметрах проекту."
+"Платформа призначення потребує стискання текстур «ETC2» для GLES3. Увімкніть "
+"пункт «Імпортувати ETC 2» у параметрах проекту."
 
 #: editor/editor_export.cpp
-#, fuzzy
 msgid ""
 "Target platform requires 'ETC' texture compression for the driver fallback "
 "to GLES2.\n"
 "Enable 'Import Etc' in Project Settings, or disable 'Driver Fallback "
 "Enabled'."
 msgstr ""
-"Платформа призначення потребує стискання текстур «ETC» для GLES2. Увімкніть "
-"підтримку у параметрах проекту."
+"Платформа призначення потребує стискання текстур «ETC» для GLES2.\n"
+"Увімкніть пункт «Імпортувати ETC» у параметрах проекту або вимкніть пункт "
+"«Увімкнено резервні драйвери»."
 
 #: editor/editor_export.cpp platform/android/export/export.cpp
 #: platform/iphone/export/export.cpp platform/javascript/export/export.cpp
@@ -1520,23 +1532,20 @@ msgid "Move Favorite Down"
 msgstr "Перемістити вибране вниз"
 
 #: editor/editor_file_dialog.cpp
-#, fuzzy
 msgid "Previous Folder"
-msgstr "Попередній поверх"
+msgstr "Попередня тека"
 
 #: editor/editor_file_dialog.cpp
-#, fuzzy
 msgid "Next Folder"
-msgstr "Наступний поверх"
+msgstr "Наступна тека"
 
 #: editor/editor_file_dialog.cpp
 msgid "Go to parent folder"
 msgstr "Перейти до батьківської теки"
 
 #: editor/editor_file_dialog.cpp
-#, fuzzy
 msgid "(Un)favorite current folder."
-msgstr "Неможливо створити теку."
+msgstr "Перемкнути стан вибраності для поточної теки."
 
 #: editor/editor_file_dialog.cpp editor/filesystem_dock.cpp
 msgid "View items as a grid of thumbnails."
@@ -1770,7 +1779,7 @@ msgstr "Не вдалося експортувати проект, код пом
 
 #: editor/editor_node.cpp
 msgid "Imported resources can't be saved."
-msgstr ""
+msgstr "Неможливо зберегти імпортовані ресурси."
 
 #: editor/editor_node.cpp editor/plugins/script_editor_plugin.cpp
 #: scene/gui/dialogs.cpp
@@ -1786,6 +1795,8 @@ msgid ""
 "This resource can't be saved because it does not belong to the edited scene. "
 "Make it unique first."
 msgstr ""
+"Цей ресурс неможливо зберегти, оскільки він не належить до редагованої "
+"сцени. Спочатку, зробіть його унікальним."
 
 #: editor/editor_node.cpp editor/plugins/animation_player_editor_plugin.cpp
 msgid "Save Resource As..."
@@ -3822,6 +3833,11 @@ msgid "Delete Node"
 msgstr "Вилучити вузол"
 
 #: editor/plugins/animation_blend_tree_editor_plugin.cpp
+#: editor/scene_tree_dock.cpp
+msgid "Delete Node(s)"
+msgstr "Вилучити вузли"
+
+#: editor/plugins/animation_blend_tree_editor_plugin.cpp
 msgid "Toggle Filter On/Off"
 msgstr "Увімкнути або вимкнути фільтр"
 
@@ -4799,8 +4815,37 @@ msgid "Layout"
 msgstr "Макет"
 
 #: editor/plugins/canvas_item_editor_plugin.cpp
-msgid "Insert keys."
-msgstr "Вставити ключі."
+msgid "Translation mask for inserting keys."
+msgstr "Маска перенесення для вставляння ключових кадрів."
+
+#: editor/plugins/canvas_item_editor_plugin.cpp
+msgid "Rotation mask for inserting keys."
+msgstr "Маска обертання для вставляння ключових кадрів."
+
+#: editor/plugins/canvas_item_editor_plugin.cpp
+msgid "Scale mask for inserting keys."
+msgstr "Маска масштабування для вставляння ключових кадрів."
+
+#: editor/plugins/canvas_item_editor_plugin.cpp
+msgid "Insert keys (based on mask)."
+msgstr "Вставити ключові кадри (на основі маски)."
+
+#: editor/plugins/canvas_item_editor_plugin.cpp
+msgid ""
+"Auto insert keys when objects are translated, rotated on scaled (based on "
+"mask).\n"
+"Keys are only added to existing tracks, no new tracks will be created.\n"
+"Keys must be inserted manually for the first time."
+msgstr ""
+"Автоматично вставляти ключові кадри при перенесенні, обертанні або "
+"масштабуванні об'єктів (на основі маски).\n"
+"Ключові кадри додаватимуться лише до наявних доріжок, нові доріжки не "
+"створюватимуться.\n"
+"Спершу ключові кадри слід додати вручну."
+
+#: editor/plugins/canvas_item_editor_plugin.cpp
+msgid "Auto Insert Key"
+msgstr "Автовставлення ключового кадру"
 
 #: editor/plugins/canvas_item_editor_plugin.cpp
 msgid "Insert Key (Existing Tracks)"
@@ -4872,6 +4917,52 @@ msgstr "Редагувати полігон (вилучити точку)"
 #: editor/plugins/collision_shape_2d_editor_plugin.cpp
 msgid "Set Handle"
 msgstr "Встановити обробник"
+
+#: editor/plugins/cpu_particles_2d_editor_plugin.cpp
+#: editor/plugins/particles_2d_editor_plugin.cpp
+msgid "Error loading image:"
+msgstr "Помилка завантаження зображення:"
+
+#: editor/plugins/cpu_particles_2d_editor_plugin.cpp
+#: editor/plugins/particles_2d_editor_plugin.cpp
+msgid "No pixels with transparency > 128 in image..."
+msgstr "В зображенні немає пікселів з прозорістю > 128..."
+
+#: editor/plugins/cpu_particles_2d_editor_plugin.cpp
+#: editor/plugins/particles_2d_editor_plugin.cpp
+msgid "Load Emission Mask"
+msgstr "Завантажити маску випромінювання"
+
+#: editor/plugins/cpu_particles_2d_editor_plugin.cpp
+#: editor/plugins/particles_2d_editor_plugin.cpp
+msgid "Clear Emission Mask"
+msgstr "Очистити маску випромінювання"
+
+#: editor/plugins/cpu_particles_2d_editor_plugin.cpp
+#: editor/plugins/particles_2d_editor_plugin.cpp
+#: editor/plugins/particles_editor_plugin.cpp
+msgid "Particles"
+msgstr "Частинки"
+
+#: editor/plugins/cpu_particles_2d_editor_plugin.cpp
+#: editor/plugins/particles_2d_editor_plugin.cpp
+msgid "Generated Point Count:"
+msgstr "Кількість генерованих точок:"
+
+#: editor/plugins/cpu_particles_2d_editor_plugin.cpp
+#: editor/plugins/particles_2d_editor_plugin.cpp
+msgid "Emission Mask"
+msgstr "Маска випромінювання"
+
+#: editor/plugins/cpu_particles_2d_editor_plugin.cpp
+#: editor/plugins/particles_2d_editor_plugin.cpp
+msgid "Capture from Pixel"
+msgstr "Захопити з пікселя"
+
+#: editor/plugins/cpu_particles_2d_editor_plugin.cpp
+#: editor/plugins/particles_2d_editor_plugin.cpp
+msgid "Emission Colors"
+msgstr "Кольори випромінювання"
 
 #: editor/plugins/cpu_particles_editor_plugin.cpp
 msgid "CPUParticles"
@@ -5224,51 +5315,14 @@ msgstr ""
 "Поставити точку можна тільки в процедурному матеріалі ParticlesMaterial"
 
 #: editor/plugins/particles_2d_editor_plugin.cpp
-msgid "Error loading image:"
-msgstr "Помилка завантаження зображення:"
-
-#: editor/plugins/particles_2d_editor_plugin.cpp
-msgid "No pixels with transparency > 128 in image..."
-msgstr "В зображенні немає пікселів з прозорістю > 128..."
-
-#: editor/plugins/particles_2d_editor_plugin.cpp
-msgid "Load Emission Mask"
-msgstr "Завантажити маску випромінювання"
-
-#: editor/plugins/particles_2d_editor_plugin.cpp
-msgid "Clear Emission Mask"
-msgstr "Очистити маску випромінювання"
-
-#: editor/plugins/particles_2d_editor_plugin.cpp
 #: editor/plugins/particles_editor_plugin.cpp
 msgid "Convert to CPUParticles"
 msgstr "Перетворити на CPUParticles"
 
 #: editor/plugins/particles_2d_editor_plugin.cpp
 #: editor/plugins/particles_editor_plugin.cpp
-msgid "Particles"
-msgstr "Частинки"
-
-#: editor/plugins/particles_2d_editor_plugin.cpp
-msgid "Generated Point Count:"
-msgstr "Кількість генерованих точок:"
-
-#: editor/plugins/particles_2d_editor_plugin.cpp
-#: editor/plugins/particles_editor_plugin.cpp
 msgid "Generation Time (sec):"
 msgstr "Час генерації (сек):"
-
-#: editor/plugins/particles_2d_editor_plugin.cpp
-msgid "Emission Mask"
-msgstr "Маска випромінювання"
-
-#: editor/plugins/particles_2d_editor_plugin.cpp
-msgid "Capture from Pixel"
-msgstr "Захопити з пікселя"
-
-#: editor/plugins/particles_2d_editor_plugin.cpp
-msgid "Emission Colors"
-msgstr "Кольори випромінювання"
 
 #: editor/plugins/particles_editor_plugin.cpp
 msgid "Faces contain no area!"
@@ -5780,8 +5834,8 @@ msgid "Save Theme As..."
 msgstr "Зберегти тему як..."
 
 #: editor/plugins/script_editor_plugin.cpp
-msgid " Class Reference"
-msgstr " Посилання на клас"
+msgid "%s Class Reference"
+msgstr "Довідник з класу %s"
 
 #: editor/plugins/script_editor_plugin.cpp
 msgid "Toggle alphabetical sorting of the method list."
@@ -5909,6 +5963,14 @@ msgstr "Зневадження за допомогою зовнішнього р
 #: editor/plugins/script_editor_plugin.cpp
 msgid "Open Godot online documentation"
 msgstr "Відкрити онлайнову документацію Godot"
+
+#: editor/plugins/script_editor_plugin.cpp
+msgid "Request Docs"
+msgstr "Запит щодо документації"
+
+#: editor/plugins/script_editor_plugin.cpp
+msgid "Help improve the Godot documentation by giving feedback"
+msgstr "Допоможіть у поліпшенні документації до Godot, надіславши свій відгук"
 
 #: editor/plugins/script_editor_plugin.cpp
 msgid "Search the reference documentation."
@@ -6598,6 +6660,22 @@ msgid "Nameless gizmo"
 msgstr "Штука без назви"
 
 #: editor/plugins/sprite_editor_plugin.cpp
+msgid "Create Mesh2D"
+msgstr "Створити Mesh2D"
+
+#: editor/plugins/sprite_editor_plugin.cpp
+msgid "Create Polygon2D"
+msgstr "Створити Polygon2D"
+
+#: editor/plugins/sprite_editor_plugin.cpp
+msgid "Create CollisionPolygon2D"
+msgstr "Створити CollisionPolygon2D"
+
+#: editor/plugins/sprite_editor_plugin.cpp
+msgid "Create LightOccluder2D"
+msgstr "Створити LightOccluder2D"
+
+#: editor/plugins/sprite_editor_plugin.cpp
 msgid "Sprite is empty!"
 msgstr "Спрайт порожній!"
 
@@ -6612,16 +6690,36 @@ msgid "Invalid geometry, can't replace by mesh."
 msgstr "Некоректна геометрія, неможливо замінити сіткою."
 
 #: editor/plugins/sprite_editor_plugin.cpp
+msgid "Invalid geometry, can't create polygon."
+msgstr "Некоректна геометрія, неможливо створити багатокутник."
+
+#: editor/plugins/sprite_editor_plugin.cpp
+msgid "Invalid geometry, can't create collision polygon."
+msgstr "Некоректна геометрія, неможливо створити багатокутник зіткнення."
+
+#: editor/plugins/sprite_editor_plugin.cpp
+msgid "Invalid geometry, can't create light occluder."
+msgstr "Некоректна геометрія, неможливо створити перешкоду світла."
+
+#: editor/plugins/sprite_editor_plugin.cpp
 msgid "Sprite"
 msgstr "Спрайт"
 
 #: editor/plugins/sprite_editor_plugin.cpp
-msgid "Convert to 2D Mesh"
-msgstr "Перетворити на плоску сітку"
+msgid "Convert to Mesh2D"
+msgstr "Перетворити на Mesh2D"
 
 #: editor/plugins/sprite_editor_plugin.cpp
-msgid "Create 2D Mesh"
-msgstr "Створити плоску сітку"
+msgid "Convert to Polygon2D"
+msgstr "Перетворити на Polygon2D"
+
+#: editor/plugins/sprite_editor_plugin.cpp
+msgid "Create CollisionPolygon2D Sibling"
+msgstr "Створити близнюк CollisionPolygon2D"
+
+#: editor/plugins/sprite_editor_plugin.cpp
+msgid "Create LightOccluder2D Sibling"
+msgstr "Створити близнюка LightOccluder2D"
 
 #: editor/plugins/sprite_editor_plugin.cpp
 msgid "Simplification: "
@@ -6973,22 +7071,20 @@ msgid "Merge from Scene"
 msgstr "Об'єднати зі сцени"
 
 #: editor/plugins/tile_set_editor_plugin.cpp
-#, fuzzy
 msgid "Next Coordinate"
-msgstr "Наступний поверх"
+msgstr "Наступна координата"
 
 #: editor/plugins/tile_set_editor_plugin.cpp
 msgid "Select the next shape, subtile, or Tile."
-msgstr ""
+msgstr "Вибір наступної форми, підплитки або плитки."
 
 #: editor/plugins/tile_set_editor_plugin.cpp
-#, fuzzy
 msgid "Previous Coordinate"
-msgstr "Попередній поверх"
+msgstr "Попередня координата"
 
 #: editor/plugins/tile_set_editor_plugin.cpp
 msgid "Select the previous shape, subtile, or Tile."
-msgstr ""
+msgstr "Вибір попередньої форми, підплитки або плитки."
 
 #: editor/plugins/tile_set_editor_plugin.cpp
 msgid "Copy bitmask."
@@ -7148,14 +7244,12 @@ msgid "Clear Tile Bitmask"
 msgstr "Спорожнити бітову маску плитки"
 
 #: editor/plugins/tile_set_editor_plugin.cpp
-#, fuzzy
 msgid "Make Polygon Concave"
-msgstr "Перемістити полігон"
+msgstr "Зробити полігон увігнутим"
 
 #: editor/plugins/tile_set_editor_plugin.cpp
-#, fuzzy
 msgid "Make Polygon Convex"
-msgstr "Перемістити полігон"
+msgstr "Зробити полігон опуклим"
 
 #: editor/plugins/tile_set_editor_plugin.cpp
 msgid "Remove Tile"
@@ -7212,6 +7306,10 @@ msgstr "Додати вузол до візуального шейдера"
 #: editor/plugins/visual_shader_editor_plugin.cpp
 msgid "Duplicate Nodes"
 msgstr "Дублювати вузли"
+
+#: editor/plugins/visual_shader_editor_plugin.cpp
+msgid "Delete Nodes"
+msgstr "Вилучити вузли"
 
 #: editor/plugins/visual_shader_editor_plugin.cpp
 msgid "Visual Shader Input Type Changed"
@@ -7280,9 +7378,8 @@ msgid "Exporting All"
 msgstr "Експортування усього"
 
 #: editor/project_export.cpp
-#, fuzzy
 msgid "The given export path doesn't exist:"
-msgstr "Шляху не існує."
+msgstr "Вказаного шляху для експортування не існує:"
 
 #: editor/project_export.cpp
 msgid "Export templates for this platform are missing/corrupted:"
@@ -7736,7 +7833,7 @@ msgid ""
 "'\"'"
 msgstr ""
 "Некоректна назва дії. Назва не може бути порожньою і не може містити "
-"символів «/», «:», «=», «\\» та «\"»."
+"символів «/», «:», «=», «\\» та «\"»"
 
 #: editor/project_settings_editor.cpp
 msgid "Action '%s' already exists!"
@@ -8434,10 +8531,6 @@ msgstr "Усунути успадкування"
 #: editor/scene_tree_dock.cpp
 msgid "Open documentation"
 msgstr "Відкрити документацію"
-
-#: editor/scene_tree_dock.cpp
-msgid "Delete Node(s)"
-msgstr "Вилучити вузли"
 
 #: editor/scene_tree_dock.cpp
 msgid "Add Child Node"
@@ -10016,6 +10109,8 @@ msgid ""
 "Plane shapes don't work well and will be removed in future versions. Please "
 "don't use them."
 msgstr ""
+"Форми площин не працюють як слід, їх буде вилучено у наступних версіях. Будь "
+"ласка, не використовуйте їх."
 
 #: scene/3d/cpu_particles.cpp
 msgid "Nothing is visible because no mesh has been assigned."
@@ -10038,6 +10133,8 @@ msgid ""
 "GIProbes are not supported by the GLES2 video driver.\n"
 "Use a BakedLightmap instead."
 msgstr ""
+"У драйвері GLES2 не передбачено підтримки GIProbes.\n"
+"Скористайтеся замість них BakedLightmap."
 
 #: scene/3d/navigation_mesh.cpp
 msgid "A NavigationMesh resource must be set or created for this node to work."
@@ -10220,6 +10317,10 @@ msgid ""
 "If you dont't intend to add a script, then please use a plain 'Control' node "
 "instead."
 msgstr ""
+"Сам контейнер не має призначення, якщо скрипт не налаштовує поведінку щодо "
+"розташування його дочірніх об'єктів.\n"
+"Якщо ви не маєте наміру додавати скрипт, будь ласка, скористайтеся замість "
+"контейнера звичайним вузлом «Control»."
 
 #: scene/gui/dialogs.cpp
 msgid "Alert!"
@@ -10230,9 +10331,8 @@ msgid "Please Confirm..."
 msgstr "Будь ласка, підтвердьте..."
 
 #: scene/gui/file_dialog.cpp
-#, fuzzy
 msgid "Go to parent folder."
-msgstr "Перейти до батьківської теки"
+msgstr "Перейти до батьківської теки."
 
 #: scene/gui/popup.cpp
 msgid ""
@@ -10319,11 +10419,14 @@ msgstr "Призначення однорідного."
 msgid "Varyings can only be assigned in vertex function."
 msgstr "Змінні величини можна пов'язувати лише із функцією вузлів."
 
+#~ msgid "Snap (s): "
+#~ msgstr "Прилипання (с): "
+
+#~ msgid "Insert keys."
+#~ msgstr "Вставити ключі."
+
 #~ msgid "Instance the selected scene(s) as child of the selected node."
 #~ msgstr "Додати вибрану сцену(и), як нащадка вибраного вузла."
-
-#~ msgid "FPS"
-#~ msgstr "Кадри за секунду"
 
 #~ msgid "Warnings:"
 #~ msgstr "Попередження:"

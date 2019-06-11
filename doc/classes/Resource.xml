@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<class name="Resource" inherits="Reference" category="Core" version="3.1">
+<class name="Resource" inherits="Reference" category="Core" version="3.2">
 	<brief_description>
 		Base class for all resources.
 	</brief_description>
@@ -7,10 +7,8 @@
 		Resource is the base class for all resource types, serving primarily as data containers. They are reference counted and freed when no longer in use. They are also loaded only once from disk, and further attempts to load the resource will return the same reference (all this in contrast to a [Node], which is not reference counted and can be instanced from disk as many times as desired). Resources can be saved externally on disk or bundled into another object, such as a [Node] or another resource.
 	</description>
 	<tutorials>
-		<link>https://docs.godotengine.org/en/stable/getting_started/step_by_step/resources.html</link>
+		<link>https://docs.godotengine.org/en/latest/getting_started/step_by_step/resources.html</link>
 	</tutorials>
-	<demos>
-	</demos>
 	<methods>
 		<method name="_setup_local_to_scene" qualifiers="virtual">
 			<return type="void">
@@ -52,7 +50,7 @@
 			<argument index="0" name="path" type="String">
 			</argument>
 			<description>
-				Sets the path of the resource. Differs from [code]set_path()[/code], if another [code]Resource[/code] exists with "path" it over-takes it, instead of failing.
+				Sets the path of the resource. Differs from [code]set_path()[/code], if another [Resource] exists with "path" it over-takes it, instead of failing.
 			</description>
 		</method>
 	</methods>

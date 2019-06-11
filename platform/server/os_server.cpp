@@ -190,18 +190,12 @@ bool OS_Server::can_draw() const {
 	return false; //can never draw
 };
 
-String OS_Server::get_name() {
+String OS_Server::get_name() const {
 
 	return "Server";
 }
 
 void OS_Server::move_window_to_foreground() {
-}
-
-void OS_Server::set_cursor_shape(CursorShape p_shape) {
-}
-
-void OS_Server::set_custom_mouse_cursor(const RES &p_cursor, CursorShape p_shape, const Vector2 &p_hotspot) {
 }
 
 OS::PowerState OS_Server::get_power_state() {

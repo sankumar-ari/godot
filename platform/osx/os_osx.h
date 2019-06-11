@@ -60,6 +60,7 @@ public:
 		unsigned int osx_state;
 		bool pressed;
 		bool echo;
+		bool raw;
 		uint32_t scancode;
 		uint32_t unicode;
 	};
@@ -165,13 +166,14 @@ public:
 
 	void wm_minimized(bool p_minimized);
 
-	virtual String get_name();
+	virtual String get_name() const;
 
 	virtual void alert(const String &p_alert, const String &p_title = "ALERT!");
 
 	virtual Error open_dynamic_library(const String p_path, void *&p_library_handle, bool p_also_set_library_path = false);
 
 	virtual void set_cursor_shape(CursorShape p_shape);
+	virtual CursorShape get_cursor_shape() const;
 	virtual void set_custom_mouse_cursor(const RES &p_cursor, CursorShape p_shape, const Vector2 &p_hotspot);
 
 	virtual void set_mouse_show(bool p_show);
@@ -185,6 +187,7 @@ public:
 	virtual Size2 get_window_size() const;
 	virtual Size2 get_real_window_size() const;
 
+	virtual void set_native_icon(const String &p_filename);
 	virtual void set_icon(const Ref<Image> &p_icon);
 
 	virtual MainLoop *get_main_loop() const;

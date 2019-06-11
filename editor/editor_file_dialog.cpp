@@ -233,8 +233,8 @@ void EditorFileDialog::_file_entered(const String &p_file) {
 void EditorFileDialog::_save_confirm_pressed() {
 	String f = dir_access->get_current_dir().plus_file(file->get_text());
 	_save_to_recent();
-	emit_signal("file_selected", f);
 	hide();
+	emit_signal("file_selected", f);
 }
 
 void EditorFileDialog::_post_popup() {
@@ -343,8 +343,8 @@ void EditorFileDialog::_action_pressed() {
 
 		if (files.size()) {
 			_save_to_recent();
-			emit_signal("files_selected", files);
 			hide();
+			emit_signal("files_selected", files);
 		}
 
 		return;
@@ -354,8 +354,8 @@ void EditorFileDialog::_action_pressed() {
 
 	if ((mode == MODE_OPEN_ANY || mode == MODE_OPEN_FILE) && dir_access->file_exists(f)) {
 		_save_to_recent();
-		emit_signal("file_selected", f);
 		hide();
+		emit_signal("file_selected", f);
 	} else if (mode == MODE_OPEN_ANY || mode == MODE_OPEN_DIR) {
 
 		String path = dir_access->get_current_dir();
@@ -374,8 +374,8 @@ void EditorFileDialog::_action_pressed() {
 		}
 
 		_save_to_recent();
-		emit_signal("dir_selected", path);
 		hide();
+		emit_signal("dir_selected", path);
 	}
 
 	if (mode == MODE_SAVE_FILE) {
@@ -441,8 +441,8 @@ void EditorFileDialog::_action_pressed() {
 		} else {
 
 			_save_to_recent();
-			emit_signal("file_selected", f);
 			hide();
+			emit_signal("file_selected", f);
 		}
 	}
 }
@@ -710,7 +710,6 @@ void EditorFileDialog::update_file_list() {
 	}
 
 	String cdir = dir_access->get_current_dir();
-	bool skip_pp = access == ACCESS_RESOURCES && cdir == "res://";
 
 	dir_access->list_dir_begin();
 
@@ -733,7 +732,7 @@ void EditorFileDialog::update_file_list() {
 		if (show_hidden || !ishidden) {
 			if (!isdir)
 				files.push_back(item);
-			else if (item != ".." || !skip_pp)
+			else
 				dirs.push_back(item);
 		}
 	}
@@ -763,8 +762,6 @@ void EditorFileDialog::update_file_list() {
 
 		dirs.pop_front();
 	}
-
-	dirs.clear();
 
 	List<String> patterns;
 	// build filter
@@ -864,8 +861,6 @@ void EditorFileDialog::update_file_list() {
 			break;
 		}
 	}
-
-	files.clear();
 }
 
 void EditorFileDialog::_filter_selected(int) {
@@ -1258,6 +1253,12 @@ void EditorFileDialog::_favorite_toggled(bool p_toggle) {
 	_update_favorites();
 }
 
+void EditorFileDialog::_favorite_pressed() {
+
+	favorite->set_pressed(!favorite->is_pressed());
+	_favorite_toggled(favorite->is_pressed());
+}
+
 void EditorFileDialog::_recent_selected(int p_idx) {
 
 	Vector<String> recentd = EditorSettings::get_singleton()->get_recent_dirs();
@@ -1381,6 +1382,7 @@ void EditorFileDialog::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("_go_up"), &EditorFileDialog::_go_up);
 
 	ClassDB::bind_method(D_METHOD("_favorite_toggled"), &EditorFileDialog::_favorite_toggled);
+	ClassDB::bind_method(D_METHOD("_favorite_pressed"), &EditorFileDialog::_favorite_pressed);
 	ClassDB::bind_method(D_METHOD("_favorite_selected"), &EditorFileDialog::_favorite_selected);
 	ClassDB::bind_method(D_METHOD("_favorite_move_up"), &EditorFileDialog::_favorite_move_up);
 	ClassDB::bind_method(D_METHOD("_favorite_move_down"), &EditorFileDialog::_favorite_move_down);
@@ -1499,7 +1501,7 @@ EditorFileDialog::EditorFileDialog() {
 	dir_next = memnew(ToolButton);
 	dir_next->set_tooltip(TTR("Next Folder"));
 	dir_up = memnew(ToolButton);
-	dir_up->set_tooltip(TTR("Go to parent folder"));
+	dir_up->set_tooltip(TTR("Go to parent folder."));
 
 	pathhb->add_child(dir_prev);
 	pathhb->add_child(dir_next);
@@ -1524,7 +1526,7 @@ EditorFileDialog::EditorFileDialog() {
 	favorite->set_flat(true);
 	favorite->set_toggle_mode(true);
 	favorite->set_tooltip(TTR("(Un)favorite current folder."));
-	favorite->connect("toggled", this, "_favorite_toggled");
+	favorite->connect("pressed", this, "_favorite_pressed");
 	pathhb->add_child(favorite);
 
 	Ref<ButtonGroup> view_mode_group;

@@ -32,6 +32,7 @@ package org.godotengine.godot;
 
 //import android.R;
 
+import android.Manifest;
 import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.AlertDialog;
@@ -53,7 +54,6 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
-import android.Manifest;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
@@ -75,7 +75,6 @@ import android.widget.FrameLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-
 import com.google.android.vending.expansion.downloader.DownloadProgressInfo;
 import com.google.android.vending.expansion.downloader.DownloaderClientMarshaller;
 import com.google.android.vending.expansion.downloader.DownloaderServiceMarshaller;
@@ -83,10 +82,6 @@ import com.google.android.vending.expansion.downloader.Helpers;
 import com.google.android.vending.expansion.downloader.IDownloaderClient;
 import com.google.android.vending.expansion.downloader.IDownloaderService;
 import com.google.android.vending.expansion.downloader.IStub;
-
-import org.godotengine.godot.input.GodotEditText;
-import org.godotengine.godot.payments.PaymentsManager;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
@@ -96,13 +91,15 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
-
 import javax.microedition.khronos.opengles.GL10;
+import org.godotengine.godot.input.GodotEditText;
+import org.godotengine.godot.payments.PaymentsManager;
 
 public class Godot extends Activity implements SensorEventListener, IDownloaderClient {
 
 	static final int MAX_SINGLETONS = 64;
 	static final int REQUEST_RECORD_AUDIO_PERMISSION = 1;
+	static final int REQUEST_CAMERA_PERMISSION = 2;
 	private IStub mDownloaderClientStub;
 	private IDownloaderService mRemoteService;
 	private TextView mStatusText;
@@ -429,7 +426,7 @@ public class Godot extends Activity implements SensorEventListener, IDownloaderC
 		}
 
 		io = new GodotIO(this);
-		io.unique_id = Secure.ANDROID_ID;
+		io.unique_id = Secure.getString(getContentResolver(), Secure.ANDROID_ID);
 		GodotLib.io = io;
 		mSensorManager = (SensorManager)getSystemService(Context.SENSOR_SERVICE);
 		mAccelerometer = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
@@ -606,6 +603,9 @@ public class Godot extends Activity implements SensorEventListener, IDownloaderC
 		for (int i = 0; i < singleton_count; i++) {
 			singletons[i].onMainDestroy();
 		}
+
+		GodotLib.ondestroy(this);
+
 		super.onDestroy();
 	}
 
@@ -957,6 +957,12 @@ public class Godot extends Activity implements SensorEventListener, IDownloaderC
 			}
 		}
 
+		if (p_name.equals("CAMERA")) {
+			if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+				requestPermissions(new String[] { Manifest.permission.CAMERA }, REQUEST_CAMERA_PERMISSION);
+				return false;
+			}
+		}
 		return true;
 	}
 
@@ -1052,5 +1058,8 @@ public class Godot extends Activity implements SensorEventListener, IDownloaderC
 		mProgressPercent.setText(String.format(Locale.ENGLISH, "%d %%", progress.mOverallProgress * 100 / progress.mOverallTotal));
 		mProgressFraction.setText(Helpers.getDownloadProgressString(progress.mOverallProgress,
 				progress.mOverallTotal));
+	}
+	public void initInputDevices() {
+		mView.initInputDevices();
 	}
 }

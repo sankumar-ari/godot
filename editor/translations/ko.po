@@ -12,11 +12,12 @@
 # 송태섭 <xotjq237@gmail.com>, 2018, 2019.
 # JY <yimjisoo@mailfence.com>, 2018.
 # Ch. <ccwpc@hanmail.net>, 2018.
+# moolow <copyhyeon@gmail.com>, 2019.
 msgid ""
 msgstr ""
 "Project-Id-Version: Godot Engine editor\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2019-03-08 15:04+0000\n"
+"PO-Revision-Date: 2019-05-10 08:15+0000\n"
 "Last-Translator: 송태섭 <xotjq237@gmail.com>\n"
 "Language-Team: Korean <https://hosted.weblate.org/projects/godot-engine/"
 "godot/ko/>\n"
@@ -25,7 +26,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Weblate 3.5.1-dev\n"
+"X-Generator: Weblate 3.7-dev\n"
 
 #: core/math/expression.cpp modules/gdscript/gdscript_functions.cpp
 #: modules/visual_script/visual_script_builtin_funcs.cpp
@@ -162,12 +163,18 @@ msgid "Animation Playback Track"
 msgstr "애니메이션 재생 트랙"
 
 #: editor/animation_track_editor.cpp
-msgid "Add Track"
-msgstr "트랙 추가"
+#, fuzzy
+msgid "Animation length (frames)"
+msgstr "애니메이션 길이 시간 (초)"
 
 #: editor/animation_track_editor.cpp
-msgid "Animation Length Time (seconds)"
+#, fuzzy
+msgid "Animation length (seconds)"
 msgstr "애니메이션 길이 시간 (초)"
+
+#: editor/animation_track_editor.cpp
+msgid "Add Track"
+msgstr "트랙 추가"
 
 #: editor/animation_track_editor.cpp
 msgid "Animation Looping"
@@ -249,11 +256,11 @@ msgstr "입방형"
 
 #: editor/animation_track_editor.cpp
 msgid "Clamp Loop Interp"
-msgstr "클램프 루프 인터프리터"
+msgstr "루프 보간 고정"
 
 #: editor/animation_track_editor.cpp
 msgid "Wrap Loop Interp"
-msgstr "랩 루프 인터프리터"
+msgstr "루프 보간 감추기"
 
 #: editor/animation_track_editor.cpp
 #: editor/plugins/canvas_item_editor_plugin.cpp
@@ -421,12 +428,20 @@ msgid "Group tracks by node or display them as plain list."
 msgstr "노드 별로 그룹을 트랙 하거나 일반 목록으로 표시합니다."
 
 #: editor/animation_track_editor.cpp
-msgid "Snap (s): "
-msgstr "스냅: "
+msgid "Snap:"
+msgstr "스냅:"
 
 #: editor/animation_track_editor.cpp
 msgid "Animation step value."
 msgstr "애니메이션 단계 값."
+
+#: editor/animation_track_editor.cpp
+msgid "Seconds"
+msgstr "초"
+
+#: editor/animation_track_editor.cpp
+msgid "FPS"
+msgstr "초당 프레임"
 
 #: editor/animation_track_editor.cpp editor/editor_properties.cpp
 #: editor/plugins/polygon_2d_editor_plugin.cpp
@@ -1363,33 +1378,32 @@ msgid "Packing"
 msgstr "패킹 중"
 
 #: editor/editor_export.cpp
-#, fuzzy
 msgid ""
 "Target platform requires 'ETC' texture compression for GLES2. Enable 'Import "
 "Etc' in Project Settings."
 msgstr ""
 "대상 플랫폼은 GLES2를 위해 'ETC' 텍스쳐 압축이 필요합니다. 프로젝트 설정에서 "
-"지원을 사용하세요."
+"'Import Etc'을 사용하세요."
 
 #: editor/editor_export.cpp
-#, fuzzy
 msgid ""
 "Target platform requires 'ETC2' texture compression for GLES3. Enable "
 "'Import Etc 2' in Project Settings."
 msgstr ""
-"대상 플랫폼은 GLES2를 위해 'ETC' 텍스쳐 압축이 필요합니다. 프로젝트 설정에서 "
-"지원을 사용하세요."
+"대상 플랫폼은 GLES3를 위해 'ETC2' 텍스쳐 압축이 필요합니다. 프로젝트 설정에"
+"서 'Import Etc 2'를 사용하세요."
 
 #: editor/editor_export.cpp
-#, fuzzy
 msgid ""
 "Target platform requires 'ETC' texture compression for the driver fallback "
 "to GLES2.\n"
 "Enable 'Import Etc' in Project Settings, or disable 'Driver Fallback "
 "Enabled'."
 msgstr ""
-"대상 플랫폼은 GLES2를 위해 'ETC' 텍스쳐 압축이 필요합니다. 프로젝트 설정에서 "
-"지원을 사용하세요."
+"대상 플랫폼은 드라이버가 GLES2로 폴백하기 위해 'ETC' 텍스쳐 압축이 필요합니"
+"다.\n"
+"프로젝트 설정에서 'Import Etc'을 키거나, 'Driver Fallback Enabled'를 비활성화"
+"하세요."
 
 #: editor/editor_export.cpp platform/android/export/export.cpp
 #: platform/iphone/export/export.cpp platform/javascript/export/export.cpp
@@ -1512,23 +1526,20 @@ msgid "Move Favorite Down"
 msgstr "즐겨찾기 아래로 이동"
 
 #: editor/editor_file_dialog.cpp
-#, fuzzy
 msgid "Previous Folder"
-msgstr "이전 층"
+msgstr "이전 폴더"
 
 #: editor/editor_file_dialog.cpp
-#, fuzzy
 msgid "Next Folder"
-msgstr "다음 층"
+msgstr "다음 폴더"
 
 #: editor/editor_file_dialog.cpp
 msgid "Go to parent folder"
 msgstr "부모 폴더로 이동"
 
 #: editor/editor_file_dialog.cpp
-#, fuzzy
 msgid "(Un)favorite current folder."
-msgstr "폴더를 만들 수 없습니다."
+msgstr "현재 폴더를 즐겨찾기 (안) 합니다."
 
 #: editor/editor_file_dialog.cpp editor/filesystem_dock.cpp
 msgid "View items as a grid of thumbnails."
@@ -1621,11 +1632,11 @@ msgstr "열거:"
 
 #: editor/editor_help.cpp
 msgid "enum  "
-msgstr "이넘(열거)  "
+msgstr "이넘  "
 
 #: editor/editor_help.cpp
 msgid "Constants"
-msgstr "상수(Constant)"
+msgstr "상수"
 
 #: editor/editor_help.cpp
 msgid "Constants:"
@@ -1761,9 +1772,8 @@ msgid "Project export failed with error code %d."
 msgstr "프로젝트 내보내기가 오류 코드 %d 로 실패했습니다."
 
 #: editor/editor_node.cpp
-#, fuzzy
 msgid "Imported resources can't be saved."
-msgstr "가져온 리소스"
+msgstr "가져온 리소스를 저장할 수 없습니다."
 
 #: editor/editor_node.cpp editor/plugins/script_editor_plugin.cpp
 #: scene/gui/dialogs.cpp
@@ -1779,6 +1789,8 @@ msgid ""
 "This resource can't be saved because it does not belong to the edited scene. "
 "Make it unique first."
 msgstr ""
+"이 리소스는 편집된 씬에 속해있지 않기 때문에 저장할 수 없습니다. 먼저 리소스"
+"를 유일하게 만드세요."
 
 #: editor/editor_node.cpp editor/plugins/animation_player_editor_plugin.cpp
 msgid "Save Resource As..."
@@ -2033,7 +2045,7 @@ msgstr "이 작업은 루트 노드가 없이는 불가능합니다."
 
 #: editor/editor_node.cpp
 msgid "Export Tile Set"
-msgstr "타일 셋 내보내기"
+msgstr "타일셋 내보내기"
 
 #: editor/editor_node.cpp
 msgid "This operation can't be done without a selected node."
@@ -2272,7 +2284,7 @@ msgstr "메시 라이브러리..."
 
 #: editor/editor_node.cpp
 msgid "TileSet..."
-msgstr "타일 셋..."
+msgstr "타일셋..."
 
 #: editor/editor_node.cpp editor/plugins/script_text_editor.cpp
 #: scene/gui/line_edit.cpp scene/gui/text_edit.cpp
@@ -2699,7 +2711,7 @@ msgstr "포함"
 
 #: editor/editor_profiler.cpp
 msgid "Self"
-msgstr "Self(셀프)"
+msgstr "셀프"
 
 #: editor/editor_profiler.cpp
 msgid "Frame #:"
@@ -3794,6 +3806,11 @@ msgid "Delete Node"
 msgstr "노드 삭제"
 
 #: editor/plugins/animation_blend_tree_editor_plugin.cpp
+#: editor/scene_tree_dock.cpp
+msgid "Delete Node(s)"
+msgstr "노드 삭제"
+
+#: editor/plugins/animation_blend_tree_editor_plugin.cpp
 msgid "Toggle Filter On/Off"
 msgstr "필터 켜기/끄기 토글"
 
@@ -4599,8 +4616,8 @@ msgid ""
 "Show a list of all objects at the position clicked\n"
 "(same as Alt+RMB in select mode)."
 msgstr ""
-"클릭한 위치에 있는 모든 오브젝트들의 목록을 보여줍니다.\n"
-"(선택모드에서 알트+우클릭과 같습니다.)"
+"클릭한 위치에 있는 모든 오브젝트들의 목록을 보여줍니다\n"
+"(선택모드에서 Alt+우클릭과 같습니다)."
 
 #: editor/plugins/canvas_item_editor_plugin.cpp
 msgid "Click to change object's rotation pivot."
@@ -4760,8 +4777,35 @@ msgid "Layout"
 msgstr "레이아웃"
 
 #: editor/plugins/canvas_item_editor_plugin.cpp
-msgid "Insert keys."
-msgstr "키 삽입."
+msgid "Translation mask for inserting keys."
+msgstr "키를 삽입하기 위한 전환 마스크."
+
+#: editor/plugins/canvas_item_editor_plugin.cpp
+msgid "Rotation mask for inserting keys."
+msgstr "키를 삽입하기 위한 회전 마스크."
+
+#: editor/plugins/canvas_item_editor_plugin.cpp
+msgid "Scale mask for inserting keys."
+msgstr "키를 삽입하기 위한 규모 마스크."
+
+#: editor/plugins/canvas_item_editor_plugin.cpp
+msgid "Insert keys (based on mask)."
+msgstr "키 삽입 (마스크 기준)."
+
+#: editor/plugins/canvas_item_editor_plugin.cpp
+msgid ""
+"Auto insert keys when objects are translated, rotated on scaled (based on "
+"mask).\n"
+"Keys are only added to existing tracks, no new tracks will be created.\n"
+"Keys must be inserted manually for the first time."
+msgstr ""
+"물체가 전환될 때 자동으로 키를 삽입합니다, 회전 또는 규모 (마스크 기준).\n"
+"키는 기존 트랙에만 추가되며, 새 트랙이 만들어지지 않습니다.\n"
+"처음에 키는 수동으로 삽입하여야 합니다."
+
+#: editor/plugins/canvas_item_editor_plugin.cpp
+msgid "Auto Insert Key"
+msgstr "자동 키 삽입"
 
 #: editor/plugins/canvas_item_editor_plugin.cpp
 msgid "Insert Key (Existing Tracks)"
@@ -4832,6 +4876,52 @@ msgstr "폴리곤 편집 (점 삭제)"
 #: editor/plugins/collision_shape_2d_editor_plugin.cpp
 msgid "Set Handle"
 msgstr "핸들 설정"
+
+#: editor/plugins/cpu_particles_2d_editor_plugin.cpp
+#: editor/plugins/particles_2d_editor_plugin.cpp
+msgid "Error loading image:"
+msgstr "이미지 불러오기 오류:"
+
+#: editor/plugins/cpu_particles_2d_editor_plugin.cpp
+#: editor/plugins/particles_2d_editor_plugin.cpp
+msgid "No pixels with transparency > 128 in image..."
+msgstr "이미지에 투명도가 128보다 큰 픽셀이 없습니다..."
+
+#: editor/plugins/cpu_particles_2d_editor_plugin.cpp
+#: editor/plugins/particles_2d_editor_plugin.cpp
+msgid "Load Emission Mask"
+msgstr "에미션 마스크 불러오기"
+
+#: editor/plugins/cpu_particles_2d_editor_plugin.cpp
+#: editor/plugins/particles_2d_editor_plugin.cpp
+msgid "Clear Emission Mask"
+msgstr "에미션 마스크 정리"
+
+#: editor/plugins/cpu_particles_2d_editor_plugin.cpp
+#: editor/plugins/particles_2d_editor_plugin.cpp
+#: editor/plugins/particles_editor_plugin.cpp
+msgid "Particles"
+msgstr "파티클"
+
+#: editor/plugins/cpu_particles_2d_editor_plugin.cpp
+#: editor/plugins/particles_2d_editor_plugin.cpp
+msgid "Generated Point Count:"
+msgstr "생성된 포인트 개수:"
+
+#: editor/plugins/cpu_particles_2d_editor_plugin.cpp
+#: editor/plugins/particles_2d_editor_plugin.cpp
+msgid "Emission Mask"
+msgstr "에미션 마스크(Emission Mask)"
+
+#: editor/plugins/cpu_particles_2d_editor_plugin.cpp
+#: editor/plugins/particles_2d_editor_plugin.cpp
+msgid "Capture from Pixel"
+msgstr "픽셀로부터 캡쳐"
+
+#: editor/plugins/cpu_particles_2d_editor_plugin.cpp
+#: editor/plugins/particles_2d_editor_plugin.cpp
+msgid "Emission Colors"
+msgstr "에미션 칼라"
 
 #: editor/plugins/cpu_particles_editor_plugin.cpp
 msgid "CPUParticles"
@@ -5183,51 +5273,14 @@ msgid "Can only set point into a ParticlesMaterial process material"
 msgstr "오직 ParticlesMaterial 프로세스 메테리얼 안의 포인트만 설정 가능"
 
 #: editor/plugins/particles_2d_editor_plugin.cpp
-msgid "Error loading image:"
-msgstr "이미지 불러오기 오류:"
-
-#: editor/plugins/particles_2d_editor_plugin.cpp
-msgid "No pixels with transparency > 128 in image..."
-msgstr "이미지에 투명도가 128보다 큰 픽셀이 없습니다..."
-
-#: editor/plugins/particles_2d_editor_plugin.cpp
-msgid "Load Emission Mask"
-msgstr "에미션 마스크 불러오기"
-
-#: editor/plugins/particles_2d_editor_plugin.cpp
-msgid "Clear Emission Mask"
-msgstr "에미션 마스크 정리"
-
-#: editor/plugins/particles_2d_editor_plugin.cpp
 #: editor/plugins/particles_editor_plugin.cpp
 msgid "Convert to CPUParticles"
 msgstr "CPU파티클로 변환"
 
 #: editor/plugins/particles_2d_editor_plugin.cpp
 #: editor/plugins/particles_editor_plugin.cpp
-msgid "Particles"
-msgstr "파티클(Particles)"
-
-#: editor/plugins/particles_2d_editor_plugin.cpp
-msgid "Generated Point Count:"
-msgstr "생성된 포인트 개수:"
-
-#: editor/plugins/particles_2d_editor_plugin.cpp
-#: editor/plugins/particles_editor_plugin.cpp
 msgid "Generation Time (sec):"
 msgstr "생성 시간 (초):"
-
-#: editor/plugins/particles_2d_editor_plugin.cpp
-msgid "Emission Mask"
-msgstr "에미션 마스크"
-
-#: editor/plugins/particles_2d_editor_plugin.cpp
-msgid "Capture from Pixel"
-msgstr "픽셀로부터 캡쳐"
-
-#: editor/plugins/particles_2d_editor_plugin.cpp
-msgid "Emission Colors"
-msgstr "에미션 칼라"
 
 #: editor/plugins/particles_editor_plugin.cpp
 msgid "Faces contain no area!"
@@ -5738,8 +5791,8 @@ msgid "Save Theme As..."
 msgstr "테마 다른 이름으로 저장..."
 
 #: editor/plugins/script_editor_plugin.cpp
-msgid " Class Reference"
-msgstr " 클래스 레퍼런스"
+msgid "%s Class Reference"
+msgstr "%s 클래스 참조"
 
 #: editor/plugins/script_editor_plugin.cpp
 msgid "Toggle alphabetical sorting of the method list."
@@ -5867,6 +5920,14 @@ msgstr "외부 에디터로 디버깅"
 #: editor/plugins/script_editor_plugin.cpp
 msgid "Open Godot online documentation"
 msgstr "Godot 온라인 문서 열기"
+
+#: editor/plugins/script_editor_plugin.cpp
+msgid "Request Docs"
+msgstr "문서 요청"
+
+#: editor/plugins/script_editor_plugin.cpp
+msgid "Help improve the Godot documentation by giving feedback"
+msgstr "피드백으로 Godot 문서를 개선하는데 도움을 주세요"
 
 #: editor/plugins/script_editor_plugin.cpp
 msgid "Search the reference documentation."
@@ -6090,7 +6151,7 @@ msgstr "물리적 본 만들기"
 
 #: editor/plugins/skeleton_editor_plugin.cpp
 msgid "Skeleton"
-msgstr "스켈레톤(Skeleton)"
+msgstr "스켈레톤"
 
 #: editor/plugins/skeleton_editor_plugin.cpp
 msgid "Create physical skeleton"
@@ -6364,7 +6425,7 @@ msgstr "크기 조절 모드 (R)"
 
 #: editor/plugins/spatial_editor_plugin.cpp
 msgid "Local Coords"
-msgstr "로컬 좌표"
+msgstr "지역 좌표"
 
 #: editor/plugins/spatial_editor_plugin.cpp
 msgid "Local Space Mode (%s)"
@@ -6556,6 +6617,22 @@ msgid "Nameless gizmo"
 msgstr "이름없는 오브젝트의 중심점"
 
 #: editor/plugins/sprite_editor_plugin.cpp
+msgid "Create Mesh2D"
+msgstr "Mesh2D 만들기"
+
+#: editor/plugins/sprite_editor_plugin.cpp
+msgid "Create Polygon2D"
+msgstr "Polygon2D 만들기"
+
+#: editor/plugins/sprite_editor_plugin.cpp
+msgid "Create CollisionPolygon2D"
+msgstr "CollisionPolygon2D 만들기"
+
+#: editor/plugins/sprite_editor_plugin.cpp
+msgid "Create LightOccluder2D"
+msgstr "LightOccluder2D 만들기"
+
+#: editor/plugins/sprite_editor_plugin.cpp
 msgid "Sprite is empty!"
 msgstr "스프라이트가 비었습니다!"
 
@@ -6565,19 +6642,39 @@ msgstr "스프라이트가 애니메이션 프레임을 사용해서 메시로 �
 
 #: editor/plugins/sprite_editor_plugin.cpp
 msgid "Invalid geometry, can't replace by mesh."
-msgstr "유효하지 않은 형상, 메시로 대체할 수 없습니다."
+msgstr "잘못된 형태, 메시로 대체할 수 없습니다."
+
+#: editor/plugins/sprite_editor_plugin.cpp
+msgid "Invalid geometry, can't create polygon."
+msgstr "잘못된 형태, 폴리곤을 만들 수 없습니다."
+
+#: editor/plugins/sprite_editor_plugin.cpp
+msgid "Invalid geometry, can't create collision polygon."
+msgstr "잘못된 형태, 충돌 폴리곤을 만들 수 없습니다."
+
+#: editor/plugins/sprite_editor_plugin.cpp
+msgid "Invalid geometry, can't create light occluder."
+msgstr "잘못된 형태, 조명 어클루더를 만들 수 없습니다."
 
 #: editor/plugins/sprite_editor_plugin.cpp
 msgid "Sprite"
 msgstr "스프라이트"
 
 #: editor/plugins/sprite_editor_plugin.cpp
-msgid "Convert to 2D Mesh"
-msgstr "2D 메시로 전환"
+msgid "Convert to Mesh2D"
+msgstr "Mesh2D로 전환"
 
 #: editor/plugins/sprite_editor_plugin.cpp
-msgid "Create 2D Mesh"
-msgstr "2D 메시 만들기"
+msgid "Convert to Polygon2D"
+msgstr "Polygon2D로 전환"
+
+#: editor/plugins/sprite_editor_plugin.cpp
+msgid "Create CollisionPolygon2D Sibling"
+msgstr "CollisionPolygon2D 노드 만들기"
+
+#: editor/plugins/sprite_editor_plugin.cpp
+msgid "Create LightOccluder2D Sibling"
+msgstr "LightOccluder2D 노드 만들기"
 
 #: editor/plugins/sprite_editor_plugin.cpp
 msgid "Simplification: "
@@ -6706,7 +6803,7 @@ msgstr "분리.:"
 
 #: editor/plugins/texture_region_editor_plugin.cpp
 msgid "TextureRegion"
-msgstr "TextureRegion"
+msgstr "텍스쳐지역"
 
 #: editor/plugins/theme_editor_plugin.cpp
 msgid "Can't save theme to file:"
@@ -6929,22 +7026,20 @@ msgid "Merge from Scene"
 msgstr "씬으로부터 병합하기"
 
 #: editor/plugins/tile_set_editor_plugin.cpp
-#, fuzzy
 msgid "Next Coordinate"
-msgstr "다음 층"
+msgstr "다음 좌표"
 
 #: editor/plugins/tile_set_editor_plugin.cpp
 msgid "Select the next shape, subtile, or Tile."
-msgstr ""
+msgstr "다음 모양, 하위 타일, 혹은 타일을 선택하세요."
 
 #: editor/plugins/tile_set_editor_plugin.cpp
-#, fuzzy
 msgid "Previous Coordinate"
-msgstr "이전 층"
+msgstr "이전 좌표"
 
 #: editor/plugins/tile_set_editor_plugin.cpp
 msgid "Select the previous shape, subtile, or Tile."
-msgstr ""
+msgstr "이전 모양, 하위 타일, 혹은 타일을 선택하세요."
 
 #: editor/plugins/tile_set_editor_plugin.cpp
 msgid "Copy bitmask."
@@ -7101,14 +7196,12 @@ msgid "Clear Tile Bitmask"
 msgstr "타일 비트 마스크 지우기"
 
 #: editor/plugins/tile_set_editor_plugin.cpp
-#, fuzzy
 msgid "Make Polygon Concave"
-msgstr "폴리곤 이동"
+msgstr "오목한 폴리곤 만들기"
 
 #: editor/plugins/tile_set_editor_plugin.cpp
-#, fuzzy
 msgid "Make Polygon Convex"
-msgstr "폴리곤 이동"
+msgstr "볼록한 폴리곤 만들기"
 
 #: editor/plugins/tile_set_editor_plugin.cpp
 msgid "Remove Tile"
@@ -7148,7 +7241,7 @@ msgstr "이 속성을 바꿀 수 없습니다."
 
 #: editor/plugins/tile_set_editor_plugin.cpp
 msgid "TileSet"
-msgstr "TileSet(타일 셋)"
+msgstr "타일셋"
 
 #: editor/plugins/visual_shader_editor_plugin.cpp
 msgid "Set Uniform Name"
@@ -7165,6 +7258,10 @@ msgstr "노드를 비주얼 셰이더에 추가"
 #: editor/plugins/visual_shader_editor_plugin.cpp
 msgid "Duplicate Nodes"
 msgstr "노드 복제"
+
+#: editor/plugins/visual_shader_editor_plugin.cpp
+msgid "Delete Nodes"
+msgstr "노드 삭제"
 
 #: editor/plugins/visual_shader_editor_plugin.cpp
 msgid "Visual Shader Input Type Changed"
@@ -7232,9 +7329,8 @@ msgid "Exporting All"
 msgstr "모두 내보내기"
 
 #: editor/project_export.cpp
-#, fuzzy
 msgid "The given export path doesn't exist:"
-msgstr "경로가 존재하지 않습니다."
+msgstr "주어진 내보내기 경로가 존재하지 않습니다:"
 
 #: editor/project_export.cpp
 msgid "Export templates for this platform are missing/corrupted:"
@@ -7254,7 +7350,7 @@ msgstr "경로 내보내기"
 
 #: editor/project_export.cpp
 msgid "Resources"
-msgstr "리소스(Resources)"
+msgstr "리소스"
 
 #: editor/project_export.cpp
 msgid "Export all resources in the project"
@@ -7784,7 +7880,7 @@ msgstr "이벤트 추가"
 
 #: editor/project_settings_editor.cpp
 msgid "Button"
-msgstr "버튼(Button)"
+msgstr "버튼"
 
 #: editor/project_settings_editor.cpp
 msgid "Left Button."
@@ -7916,7 +8012,7 @@ msgstr "액션:"
 
 #: editor/project_settings_editor.cpp
 msgid "Action"
-msgstr "액션(Action)"
+msgstr "액션"
 
 #: editor/project_settings_editor.cpp
 msgid "Deadzone"
@@ -8120,7 +8216,7 @@ msgstr "각 노드에 대해 카운터가 증가하는 양"
 
 #: editor/rename_dialog.cpp
 msgid "Padding"
-msgstr "패딩(Padding)"
+msgstr "패딩"
 
 #: editor/rename_dialog.cpp
 msgid ""
@@ -8369,10 +8465,6 @@ msgstr "상속 지우기"
 #: editor/scene_tree_dock.cpp
 msgid "Open documentation"
 msgstr "문서 열기"
-
-#: editor/scene_tree_dock.cpp
-msgid "Delete Node(s)"
-msgstr "노드 삭제"
 
 #: editor/scene_tree_dock.cpp
 msgid "Add Child Node"
@@ -8875,7 +8967,7 @@ msgstr "라이브러리들: "
 
 #: modules/gdnative/register_types.cpp
 msgid "GDNative"
-msgstr "GD네이티브"
+msgstr "GDNative"
 
 #: modules/gdscript/gdscript_functions.cpp
 msgid "Step argument is zero!"
@@ -9674,10 +9766,10 @@ msgid ""
 "Consider adding a CollisionShape2D or CollisionPolygon2D as a child to "
 "define its shape."
 msgstr ""
-"이 노드는 모양을 갖는 자식 노드가 없습니다, 다른 물체와 충돌하거나 상호작용 "
+"이 노드는 Shape을 갖는 자식 노드가 없습니다, 다른 물체와 충돌하거나 상호작용 "
 "할 수 없습니다.\n"
-"CollisionShape2D 또는 CollisionPolygon2D를 자식 노드로 추가하여 모양을 정의하"
-"세요."
+"CollisionShape2D 또는 CollisionPolygon2D를 자식 노드로 추가하여 Shape을 정의"
+"하세요."
 
 #: scene/2d/collision_polygon_2d.cpp
 msgid ""
@@ -9699,17 +9791,17 @@ msgid ""
 "CollisionObject2D derived node. Please only use it as a child of Area2D, "
 "StaticBody2D, RigidBody2D, KinematicBody2D, etc. to give them a shape."
 msgstr ""
-"CollisionShape2D는 CollisionObject2D에 충돌 모양을 지정하기 위해서만 사용됩니"
-"다. Area2D, StaticBody2D, RigidBody2D, KinematicBody2D 등의 자식 노드로 추가"
-"하여 사용합니다."
+"CollisionShape2D는 CollisionObject2D에 충돌 Shape을 지정하기 위해서만 사용됩"
+"니다. Area2D, StaticBody2D, RigidBody2D, KinematicBody2D 등의 자식 노드로 추"
+"가하여 사용합니다."
 
 #: scene/2d/collision_shape_2d.cpp
 msgid ""
 "A shape must be provided for CollisionShape2D to function. Please create a "
 "shape resource for it!"
 msgstr ""
-"CollisionShape2D가 기능을 하기 위해서는 반드시 모양이 제공되어야 합니다. 모"
-"양 리소스를 만드세요!"
+"CollisionShape2D가 기능을 하기 위해서는 반드시 Shape이 제공되어야 합니다. "
+"Shape 리소스를 만드세요!"
 
 #: scene/2d/cpu_particles_2d.cpp
 msgid ""
@@ -9882,9 +9974,9 @@ msgid ""
 "Consider adding a CollisionShape or CollisionPolygon as a child to define "
 "its shape."
 msgstr ""
-"이 노드는 모양을 갖는 자식 노드가 없습니다, 다른 물체와 충돌하거나 상호작용 "
+"이 노드는 Shape을 갖는 자식 노드가 없습니다, 다른 물체와 충돌하거나 상호작용 "
 "할 수 없습니다.\n"
-"CollisionShape 또는 CollisionPolygon를 자식 노드로 추가하여 모양을 정의하세"
+"CollisionShape 또는 CollisionPolygon를 자식 노드로 추가하여 Shape을 정의하세"
 "요."
 
 #: scene/3d/collision_polygon.cpp
@@ -9893,7 +9985,7 @@ msgid ""
 "CollisionObject derived node. Please only use it as a child of Area, "
 "StaticBody, RigidBody, KinematicBody, etc. to give them a shape."
 msgstr ""
-"CollisionPolygon은 CollisionObject에 충돌 모양을 지정하기 위해서만 사용됩니"
+"CollisionPolygon은 CollisionObject에 충돌 Shape을 지정하기 위해서만 사용됩니"
 "다. Area, StaticBody, RigidBody, KinematicBody 등에 자식 노드로 추가하여 사용"
 "합니다."
 
@@ -9907,16 +9999,16 @@ msgid ""
 "derived node. Please only use it as a child of Area, StaticBody, RigidBody, "
 "KinematicBody, etc. to give them a shape."
 msgstr ""
-"CollisionShape은 CollisionObject에 충돌 모양을 지정하기 위해서만 사용됩니다. "
-"Area, StaticBody, RigidBody, KinematicBody 등에 자식 노드로 추가하여 사용합니"
-"다."
+"CollisionShape은 CollisionObject에 충돌 Shape을 지정하기 위해서만 사용됩니"
+"다. Area, StaticBody, RigidBody, KinematicBody 등에 자식 노드로 추가하여 사용"
+"합니다."
 
 #: scene/3d/collision_shape.cpp
 msgid ""
 "A shape must be provided for CollisionShape to function. Please create a "
 "shape resource for it!"
 msgstr ""
-"CollisionShape가 기능을 하기 위해서는 모양이 제공되어야 합니다. 모양 리소스"
+"CollisionShape가 기능을 하기 위해서는 Shape이 제공되어야 합니다. Shape 리소스"
 "를 만드세요!"
 
 #: scene/3d/collision_shape.cpp
@@ -9924,6 +10016,8 @@ msgid ""
 "Plane shapes don't work well and will be removed in future versions. Please "
 "don't use them."
 msgstr ""
+"평면 모양은 잘 작동하지 않으며 이후 버전에서 제거될 예정입니다. 사용하지 말아"
+"주세요."
 
 #: scene/3d/cpu_particles.cpp
 msgid "Nothing is visible because no mesh has been assigned."
@@ -9946,6 +10040,8 @@ msgid ""
 "GIProbes are not supported by the GLES2 video driver.\n"
 "Use a BakedLightmap instead."
 msgstr ""
+"GIProbe는 GLES2 비디오 드라이버에서 지원하지 않습니다.\n"
+"BakedLightmap을 사용하세요."
 
 #: scene/3d/navigation_mesh.cpp
 msgid "A NavigationMesh resource must be set or created for this node to work."
@@ -10123,6 +10219,8 @@ msgid ""
 "If you dont't intend to add a script, then please use a plain 'Control' node "
 "instead."
 msgstr ""
+"컨테이너 자체는 자식 배치 행동을 구성하지 않는 한 용도가 없습니다.\n"
+"스크립트를 추가하지 않는 경우, 순수한 'Control' 노드를 사용해주세요."
 
 #: scene/gui/dialogs.cpp
 msgid "Alert!"
@@ -10133,9 +10231,8 @@ msgid "Please Confirm..."
 msgstr "확인해주세요..."
 
 #: scene/gui/file_dialog.cpp
-#, fuzzy
 msgid "Go to parent folder."
-msgstr "부모 폴더로 이동"
+msgstr "부모 폴더로 이동합니다."
 
 #: scene/gui/popup.cpp
 msgid ""
@@ -10220,11 +10317,14 @@ msgstr "균일하게 배치함."
 msgid "Varyings can only be assigned in vertex function."
 msgstr "Varyings는 오직 버텍스 함수에서만 지정할 수 있습니다."
 
+#~ msgid "Snap (s): "
+#~ msgstr "스냅: "
+
+#~ msgid "Insert keys."
+#~ msgstr "키 삽입."
+
 #~ msgid "Instance the selected scene(s) as child of the selected node."
 #~ msgstr "선택된 씬을 선택된 노드의 자식으로 인스턴스 합니다."
-
-#~ msgid "FPS"
-#~ msgstr "초당 프레임"
 
 #~ msgid "Warnings:"
 #~ msgstr "경고:"
@@ -11702,9 +11802,6 @@ msgstr "Varyings는 오직 버텍스 함수에서만 지정할 수 있습니다.
 
 #~ msgid "Cannot go into subdir:"
 #~ msgstr "하위 디렉토리로 이동할 수 없습니다:"
-
-#~ msgid "Insert Keys (Ins)"
-#~ msgstr "키 삽입 (Ins 키)"
 
 #~ msgid "Top (Num7)"
 #~ msgstr "윗면 (넘버패드7)"

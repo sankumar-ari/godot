@@ -1,6 +1,13 @@
 # Third party libraries
 
 
+## assimp
+
+- Upstream: http://github.com/assimp/assimp
+- Version: git (d3d98a7ec0c8d38e1952b46dfe53f7e9233dc92d)
+- License: BSD-3-Clause
+
+
 ## b2d_convexdecomp
 
 - Upstream: https://github.com/erincatto/Box2D/tree/master/Contributions/Utilities/ConvexDecomposition
@@ -115,7 +122,7 @@ Use UI font variant if available, because it has tight vertical metrics and good
 ## freetype
 
 - Upstream: https://www.freetype.org
-- Version: 2.9.1
+- Version: 2.10.0
 - License: FreeType License (BSD-like)
 
 Files extracted from upstream source:
@@ -163,7 +170,7 @@ Files extracted from upstream source:
 ## libpng
 
 - Upstream: http://libpng.org/pub/png/libpng.html
-- Version: 1.6.35
+- Version: 1.6.37
 - License: libpng/zlib
 
 Files extracted from upstream source:
@@ -178,17 +185,20 @@ Files extracted from upstream source:
 ## libsimplewebm
 
 - Upstream: https://github.com/zaps166/libsimplewebm
-- Version: git (05cfdc2, 2016)
-- License: MIT, BSD-3-Clause
+- Version: git (fe57fd3, 2019)
+- License: MIT (main), BSD-3-Clause (libwebm)
+
+This contains libwebm, but the version in use is updated from the one used by libsimplewebm,
+and may have *unmarked* alterations from that.
 
 Files extracted from upstream source:
 
-TODO.
+- all the .cpp, .hpp files in the main folder except `example.cpp`
+- LICENSE
 
 Important: Some files have Godot-made changes.
 They are marked with `// -- GODOT start --` and `// -- GODOT end --`
 comments.
-
 
 ## libtheora
 
@@ -255,17 +265,17 @@ changes are marked with `// -- GODOT --` comments.
 ## libwebsockets
 
 - Upstream: https://github.com/warmcat/libwebsockets
-- Version: 3.1.0
+- Version: 3.0.1
 - License: LGPLv2.1 + static linking exception
 
 File extracted from upstream source:
-- From `lib/` into `thirdparty/libwebsockets/lib`:
+- From `lib/` into `thirdparty/libwebsockets`:
   - Everything from `core`
-  - From `event-libs` only the `poll` subfolder and the `private.h` header
-  - From `misc` only `base64-decode.c`, `getifaddrs.c`, `getifaddrs.h`, `lejp.c`, and `sha-1.c` (and the `private.h` header)
-  - From `plat` everything from `unix` and `windows` (and the `private.h` header)
+  - From `event-libs` only the `poll` subfolder
+  - From `misc` only `base64-decode.c`, `getifaddrs.c`, `getifaddrs.h`, `lejp.c`, and `sha-1.c`
+  - From `plat` only `lws-plat-unix.c` and `lws-plat-win.c`
   - From `roles` only `private.h`, `h1`, `http`, `listen`, `pipe`, `raw`, `ws`
-    - From `roles/http` exclude `minilex.c` and the `compression` subfolder
+    - From `roles/http` exclude `minilex.c`
     - From `roles/http/server` exclude `access-log.c`, `lws-spa.c`, `ranges.c`, and `rewrite.c`
     - From `roles/ws` exclude `ext` folder.
   - From `tls` exclude `openssl` folder.
@@ -288,8 +298,12 @@ Godot build configurations, check them out when updating.
 File extracted from upstream release tarball `mbedtls-2.16.0-apache.tgz`:
 - All `*.h` from `include/mbedtls/` to `thirdparty/mbedtls/include/mbedtls/`
 - All `*.c` from `library/` to `thirdparty/mbedtls/library/`
-- Applied the patch in `thirdparty/mbedtls/1453.diff` (PR 1453). Soon to be merged upstream. Check it out at next update.
-- Applied the patch in `thirdparty/mbedtls/padlock.diff`. This disables VIA padlock support which defines a symbol `unsupported` which clashses with a symbol in libwebsockets.
+- Applied the patch in `thirdparty/mbedtls/1453.diff` (PR 1453).
+  Soon to be merged upstream. Check it out at next update.
+- Applied the patch in `thirdparty/mbedtls/padlock.diff`. This disables VIA
+  padlock support which defines a symbol `unsupported` which clashes with
+  a symbol in libwebsockets.
+
 
 ## miniupnpc
 
@@ -332,7 +346,7 @@ Collection of single-file libraries used in Godot components.
   * License: Public Domain
  - `clipper.{cpp,hpp}`
   * Upstream: https://sourceforge.net/projects/polyclipping
-  * Version: 6.4.2
+  * Version: 6.4.2 + Godot changes (added optional exceptions handling)
   * License: BSL-1.0
 - `fastlz.{c,h}`
   * Upstream: https://github.com/ariya/FastLZ
@@ -491,21 +505,6 @@ They are marked with `// -- GODOT start --` and `// -- GODOT end --`
 comments and a patch is provided in the squish/ folder.
 
 
-## thekla_atlas
-
-- Upstream: https://github.com/Thekla/thekla_atlas
-- Version: git (80a1430, 2017)
-- License: MIT
-
-Files extracted from the upstream source:
-
-- Relevant sources from src/
-- License.txt
-
-Important: Some files have Godot-made changes, those
-changes are marked with `// -- GODOT --` comments.
-
-
 ## tinyexr
 
 - Upstream: https://github.com/syoyo/tinyexr
@@ -515,6 +514,37 @@ changes are marked with `// -- GODOT --` comments.
 Files extracted from upstream source:
 
 - `tinyexr.{cc,h}`
+
+
+## vhacd
+
+- Upstream: https://github.com/kmammou/v-hacd
+- Version: git (2297aa1, 2018)
+- License: BSD-3-Clause
+
+Files extracted from upstream source:
+
+- From `src/VHACD_Lib/`: `inc`, `public` and `src`
+- `LICENSE`
+
+Some downstream changes have been made and are identified by
+`// -- GODOT start --` and `// -- GODOT end --` comments.
+They can be reapplied using the patches included in the `vhacd`
+folder.
+
+
+## xatlas
+
+- Upstream: https://github.com/jpcy/xatlas
+- Version: git (b8ec29b, 2018)
+- License: MIT
+
+Files extracted from upstream source:
+
+- `xatlas.{cpp,h}`
+
+Note: License is marked as Public Domain in the files, but it was
+later clarified upstream to MIT license.
 
 
 ## zlib
@@ -531,7 +561,7 @@ Files extracted from upstream source:
 ## zstd
 
 - Upstream: https://github.com/facebook/zstd
-- Version: 1.3.8
+- Version: 1.4.0
 - License: BSD-3-Clause
 
 Files extracted from upstream source:

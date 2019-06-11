@@ -616,7 +616,7 @@ ShaderLanguage::Token ShaderLanguage::_get_token() {
 					else
 						tk.type = TK_INT_CONSTANT;
 
-					tk.constant = str.to_double(); //wont work with hex
+					tk.constant = str.to_double(); //won't work with hex
 					tk.line = tk_line;
 
 					return tk;
@@ -2968,6 +2968,10 @@ ShaderLanguage::Node *ShaderLanguage::_parse_expression(BlockNode *p_block, cons
 							member_type = DataType(dt - 1);
 						} else if (l == 2) {
 							member_type = dt;
+						} else if (l == 3) {
+							member_type = DataType(dt + 1);
+						} else if (l == 4) {
+							member_type = DataType(dt + 2);
 						} else {
 							ok = false;
 							break;
@@ -3001,6 +3005,8 @@ ShaderLanguage::Node *ShaderLanguage::_parse_expression(BlockNode *p_block, cons
 							member_type = DataType(dt - 1);
 						} else if (l == 3) {
 							member_type = dt;
+						} else if (l == 4) {
+							member_type = DataType(dt + 1);
 						} else {
 							ok = false;
 							break;
@@ -3620,7 +3626,8 @@ ShaderLanguage::Node *ShaderLanguage::_reduce_expression(BlockNode *p_block, Sha
 					case TYPE_FLOAT: {
 						nv.real = -cn->values[i].real;
 					} break;
-					default: {}
+					default: {
+					}
 				}
 
 				values.push_back(nv);
@@ -4822,7 +4829,8 @@ Error ShaderLanguage::complete(const String &p_code, const Map<StringName, Funct
 				case TYPE_MAT2: limit = 2; break;
 				case TYPE_MAT3: limit = 3; break;
 				case TYPE_MAT4: limit = 4; break;
-				default: {}
+				default: {
+				}
 			}
 
 			for (int i = 0; i < limit; i++) {

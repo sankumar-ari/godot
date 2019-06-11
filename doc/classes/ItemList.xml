@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<class name="ItemList" inherits="Control" category="Core" version="3.1">
+<class name="ItemList" inherits="Control" category="Core" version="3.2">
 	<brief_description>
 		Control that provides a list of selectable items (and/or icons) in a single column, or optionally in multiple columns.
 	</brief_description>
@@ -9,8 +9,6 @@
 	</description>
 	<tutorials>
 	</tutorials>
-	<demos>
-	</demos>
 	<methods>
 		<method name="add_icon_item">
 			<return type="void">
@@ -34,7 +32,7 @@
 			</argument>
 			<description>
 				Adds an item to the item list with specified text. Specify an icon of null for a list item with no icon.
-				If selectable is true the list item will be selectable.
+				If selectable is [code]true[/code] the list item will be selectable.
 			</description>
 		</method>
 		<method name="clear">
@@ -66,7 +64,7 @@
 			<return type="int">
 			</return>
 			<description>
-				Return count of items currently in the item list.
+				Returns count of items currently in the item list.
 			</description>
 		</method>
 		<method name="get_item_custom_bg_color" qualifiers="const">
@@ -124,7 +122,7 @@
 			<argument index="0" name="idx" type="int">
 			</argument>
 			<description>
-				Return the text for specified item index.
+				Returns the text for specified item index.
 			</description>
 		</method>
 		<method name="get_item_tooltip" qualifiers="const">
@@ -133,7 +131,7 @@
 			<argument index="0" name="idx" type="int">
 			</argument>
 			<description>
-				Return tooltip hint for specified item index.
+				Returns tooltip hint for specified item index.
 			</description>
 		</method>
 		<method name="get_selected_items">

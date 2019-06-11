@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<class name="String" category="Built-In Types" version="3.1">
+<class name="String" category="Built-In Types" version="3.2">
 	<brief_description>
 		Built-in string class.
 	</brief_description>
@@ -7,9 +7,8 @@
 		This is the built-in string class (and the one used by GDScript). It supports Unicode and provides all necessary means for string handling. Strings are reference counted and use a copy-on-write approach, so passing them around is cheap in resources.
 	</description>
 	<tutorials>
+		<link>https://docs.godotengine.org/en/latest/getting_started/scripting/gdscript/gdscript_format_string.html</link>
 	</tutorials>
-	<demos>
-	</demos>
 	<methods>
 		<method name="String">
 			<return type="String">
@@ -432,6 +431,14 @@
 				Returns [code]true[/code] if this string is a subsequence of the given string, without considering case.
 			</description>
 		</method>
+		<method name="is_valid_filename">
+			<return type="bool">
+			</return>
+			<description>
+				Returns [code]true[/code] if this string is free from characters that aren't allowed in file names, those being:
+				[code]: / \ ? * " | % &lt; &gt;[/code]
+			</description>
+		</method>
 		<method name="is_valid_float">
 			<return type="bool">
 			</return>
@@ -734,7 +741,14 @@
 			<argument index="1" name="right" type="bool" default="True">
 			</argument>
 			<description>
-				Returns a copy of the string stripped of any non-printable character at the beginning and the end. The optional arguments are used to toggle stripping on the left and right edges respectively.
+				Returns a copy of the string stripped of any non-printable character (including tabulations, spaces and line breaks) at the beginning and the end. The optional arguments are used to toggle stripping on the left and right edges respectively.
+			</description>
+		</method>
+		<method name="strip_escapes">
+			<return type="String">
+			</return>
+			<description>
+				Returns a copy of the string stripped of any escape character. These include all non-printable control characters of the first page of the ASCII table (&lt; 32), such as tabulation ([code]\t[/code] in C) and newline ([code]\n[/code] and [code]\r[/code]) characters, but not spaces.
 			</description>
 		</method>
 		<method name="substr">

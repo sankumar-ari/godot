@@ -3,12 +3,13 @@
 # Copyright (c) 2014-2019 Godot Engine contributors (cf. AUTHORS.md)
 # This file is distributed under the same license as the Godot source code.
 # George Tsiamasiotis <gtsiam@windowslive.com>, 2017-2018.
+# Georgios Katsanakis <geo.elgeo@gmail.com>, 2019.
 msgid ""
 msgstr ""
 "Project-Id-Version: Godot Engine editor\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2018-12-13 14:39+0100\n"
-"Last-Translator: George Tsiamasiotis <gtsiam@windowslive.com>\n"
+"PO-Revision-Date: 2019-03-12 15:26+0000\n"
+"Last-Translator: Georgios Katsanakis <geo.elgeo@gmail.com>\n"
 "Language-Team: Greek <https://hosted.weblate.org/projects/godot-engine/godot/"
 "el/>\n"
 "Language: el\n"
@@ -16,7 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Poedit 2.2\n"
+"X-Generator: Weblate 3.5.1\n"
 
 #: core/math/expression.cpp modules/gdscript/gdscript_functions.cpp
 #: modules/visual_script/visual_script_builtin_funcs.cpp
@@ -86,14 +87,12 @@ msgid "Delete Selected Key(s)"
 msgstr "Διαγραφή επιλογής"
 
 #: editor/animation_bezier_editor.cpp
-#, fuzzy
 msgid "Add Bezier Point"
-msgstr "Προσθήκη σημείου"
+msgstr "Προσθήκη σημείου Bezier"
 
 #: editor/animation_bezier_editor.cpp
-#, fuzzy
 msgid "Move Bezier Points"
-msgstr "Μετακίνηση σημείου"
+msgstr "Μετακίνηση σημείου Bezier"
 
 #: editor/animation_bezier_editor.cpp editor/animation_track_editor.cpp
 msgid "Anim Duplicate Keys"
@@ -158,12 +157,18 @@ msgid "Animation Playback Track"
 msgstr "Κομμάτι αναπαραγωγής κίνησης"
 
 #: editor/animation_track_editor.cpp
-msgid "Add Track"
-msgstr "Προσθήκη κομματιού"
+#, fuzzy
+msgid "Animation length (frames)"
+msgstr "Μήκος κίνησης (δευτερόλεπτα)"
 
 #: editor/animation_track_editor.cpp
-msgid "Animation Length Time (seconds)"
+#, fuzzy
+msgid "Animation length (seconds)"
 msgstr "Μήκος κίνησης (δευτερόλεπτα)"
+
+#: editor/animation_track_editor.cpp
+msgid "Add Track"
+msgstr "Προσθήκη κομματιού"
 
 #: editor/animation_track_editor.cpp
 msgid "Animation Looping"
@@ -431,12 +436,21 @@ msgid "Group tracks by node or display them as plain list."
 msgstr "Ομαδοποίηση κομματιών ανα κόμβο, ή εμφάνιση σε λίστα."
 
 #: editor/animation_track_editor.cpp
-msgid "Snap (s): "
-msgstr "Κούμπωμα (s): "
+#, fuzzy
+msgid "Snap:"
+msgstr "Κούμπωμα"
 
 #: editor/animation_track_editor.cpp
 msgid "Animation step value."
 msgstr "Τιμή βήματος κίνησης."
+
+#: editor/animation_track_editor.cpp
+msgid "Seconds"
+msgstr ""
+
+#: editor/animation_track_editor.cpp
+msgid "FPS"
+msgstr "FPS"
 
 #: editor/animation_track_editor.cpp editor/editor_properties.cpp
 #: editor/plugins/polygon_2d_editor_plugin.cpp
@@ -3898,6 +3912,11 @@ msgid "Delete Node"
 msgstr "Διαγραφή Κόμβων"
 
 #: editor/plugins/animation_blend_tree_editor_plugin.cpp
+#: editor/scene_tree_dock.cpp
+msgid "Delete Node(s)"
+msgstr "Διαγραφή Κόμβων"
+
+#: editor/plugins/animation_blend_tree_editor_plugin.cpp
 #, fuzzy
 msgid "Toggle Filter On/Off"
 msgstr "Εναλλαγή κομματιού on/off."
@@ -4886,8 +4905,34 @@ msgid "Layout"
 msgstr "Διάταξη"
 
 #: editor/plugins/canvas_item_editor_plugin.cpp
-msgid "Insert keys."
-msgstr "Εισαγωγή κλειδιών."
+msgid "Translation mask for inserting keys."
+msgstr ""
+
+#: editor/plugins/canvas_item_editor_plugin.cpp
+msgid "Rotation mask for inserting keys."
+msgstr ""
+
+#: editor/plugins/canvas_item_editor_plugin.cpp
+msgid "Scale mask for inserting keys."
+msgstr ""
+
+#: editor/plugins/canvas_item_editor_plugin.cpp
+#, fuzzy
+msgid "Insert keys (based on mask)."
+msgstr "Εισαγωγή κλειδιού (Υπαρκτά κομμάτια)"
+
+#: editor/plugins/canvas_item_editor_plugin.cpp
+msgid ""
+"Auto insert keys when objects are translated, rotated on scaled (based on "
+"mask).\n"
+"Keys are only added to existing tracks, no new tracks will be created.\n"
+"Keys must be inserted manually for the first time."
+msgstr ""
+
+#: editor/plugins/canvas_item_editor_plugin.cpp
+#, fuzzy
+msgid "Auto Insert Key"
+msgstr "Anim εισαγωγή κλειδιού"
 
 #: editor/plugins/canvas_item_editor_plugin.cpp
 msgid "Insert Key (Existing Tracks)"
@@ -4959,6 +5004,52 @@ msgstr "Επεγεργασία πολυγώνου (Αφαίρεση σημείο
 #: editor/plugins/collision_shape_2d_editor_plugin.cpp
 msgid "Set Handle"
 msgstr "Ορισμός λαβής"
+
+#: editor/plugins/cpu_particles_2d_editor_plugin.cpp
+#: editor/plugins/particles_2d_editor_plugin.cpp
+msgid "Error loading image:"
+msgstr "Σφάλμα κατά την φόρτωση εικόνας:"
+
+#: editor/plugins/cpu_particles_2d_editor_plugin.cpp
+#: editor/plugins/particles_2d_editor_plugin.cpp
+msgid "No pixels with transparency > 128 in image..."
+msgstr "Δεν υπάρχουν εικονοστοιχεία με διαφάνεια >128 στην εικόνα..."
+
+#: editor/plugins/cpu_particles_2d_editor_plugin.cpp
+#: editor/plugins/particles_2d_editor_plugin.cpp
+msgid "Load Emission Mask"
+msgstr "Φόρτωση μάσκας εκπομπής"
+
+#: editor/plugins/cpu_particles_2d_editor_plugin.cpp
+#: editor/plugins/particles_2d_editor_plugin.cpp
+msgid "Clear Emission Mask"
+msgstr "Εκκαθάριση μάσκας εκπομπής"
+
+#: editor/plugins/cpu_particles_2d_editor_plugin.cpp
+#: editor/plugins/particles_2d_editor_plugin.cpp
+#: editor/plugins/particles_editor_plugin.cpp
+msgid "Particles"
+msgstr "Σωματίδια"
+
+#: editor/plugins/cpu_particles_2d_editor_plugin.cpp
+#: editor/plugins/particles_2d_editor_plugin.cpp
+msgid "Generated Point Count:"
+msgstr "Αριθμός δημιουργημένων σημείων:"
+
+#: editor/plugins/cpu_particles_2d_editor_plugin.cpp
+#: editor/plugins/particles_2d_editor_plugin.cpp
+msgid "Emission Mask"
+msgstr "Μάσκα εκπομπής"
+
+#: editor/plugins/cpu_particles_2d_editor_plugin.cpp
+#: editor/plugins/particles_2d_editor_plugin.cpp
+msgid "Capture from Pixel"
+msgstr "Καταγραφή από εικονοστοιχείο"
+
+#: editor/plugins/cpu_particles_2d_editor_plugin.cpp
+#: editor/plugins/particles_2d_editor_plugin.cpp
+msgid "Emission Colors"
+msgstr "Χρώματα εκπομπής"
 
 #: editor/plugins/cpu_particles_editor_plugin.cpp
 msgid "CPUParticles"
@@ -5315,51 +5406,14 @@ msgstr ""
 "ParticlesMaterial"
 
 #: editor/plugins/particles_2d_editor_plugin.cpp
-msgid "Error loading image:"
-msgstr "Σφάλμα κατά την φόρτωση εικόνας:"
-
-#: editor/plugins/particles_2d_editor_plugin.cpp
-msgid "No pixels with transparency > 128 in image..."
-msgstr "Δεν υπάρχουν εικονοστοιχεία με διαφάνεια >128 στην εικόνα..."
-
-#: editor/plugins/particles_2d_editor_plugin.cpp
-msgid "Load Emission Mask"
-msgstr "Φόρτωση μάσκας εκπομπής"
-
-#: editor/plugins/particles_2d_editor_plugin.cpp
-msgid "Clear Emission Mask"
-msgstr "Εκκαθάριση μάσκας εκπομπής"
-
-#: editor/plugins/particles_2d_editor_plugin.cpp
 #: editor/plugins/particles_editor_plugin.cpp
 msgid "Convert to CPUParticles"
 msgstr "Μετατροπή σε σωματίδια CPU"
 
 #: editor/plugins/particles_2d_editor_plugin.cpp
 #: editor/plugins/particles_editor_plugin.cpp
-msgid "Particles"
-msgstr "Σωματίδια"
-
-#: editor/plugins/particles_2d_editor_plugin.cpp
-msgid "Generated Point Count:"
-msgstr "Αριθμός δημιουργημένων σημείων:"
-
-#: editor/plugins/particles_2d_editor_plugin.cpp
-#: editor/plugins/particles_editor_plugin.cpp
 msgid "Generation Time (sec):"
 msgstr "Χρόνος  παραγωγής (sec):"
-
-#: editor/plugins/particles_2d_editor_plugin.cpp
-msgid "Emission Mask"
-msgstr "Μάσκα εκπομπής"
-
-#: editor/plugins/particles_2d_editor_plugin.cpp
-msgid "Capture from Pixel"
-msgstr "Καταγραφή από εικονοστοιχείο"
-
-#: editor/plugins/particles_2d_editor_plugin.cpp
-msgid "Emission Colors"
-msgstr "Χρώματα εκπομπής"
 
 #: editor/plugins/particles_editor_plugin.cpp
 msgid "Faces contain no area!"
@@ -5898,7 +5952,8 @@ msgid "Save Theme As..."
 msgstr "Αποθήκευση θέματος ως..."
 
 #: editor/plugins/script_editor_plugin.cpp
-msgid " Class Reference"
+#, fuzzy
+msgid "%s Class Reference"
 msgstr " Αναφορά κλασεων"
 
 #: editor/plugins/script_editor_plugin.cpp
@@ -6031,6 +6086,14 @@ msgstr "Αποσφαλμάτωση με εξωτερικό επεξεργαστ�
 #: editor/plugins/script_editor_plugin.cpp
 msgid "Open Godot online documentation"
 msgstr "Άνοιγμα ηλεκτρονικής τεκμηρίωσης της Godot"
+
+#: editor/plugins/script_editor_plugin.cpp
+msgid "Request Docs"
+msgstr ""
+
+#: editor/plugins/script_editor_plugin.cpp
+msgid "Help improve the Godot documentation by giving feedback"
+msgstr ""
 
 #: editor/plugins/script_editor_plugin.cpp
 msgid "Search the reference documentation."
@@ -6743,6 +6806,26 @@ msgstr ""
 
 #: editor/plugins/sprite_editor_plugin.cpp
 #, fuzzy
+msgid "Create Mesh2D"
+msgstr "Δημιουργία πλέγματος περιγράμματος"
+
+#: editor/plugins/sprite_editor_plugin.cpp
+#, fuzzy
+msgid "Create Polygon2D"
+msgstr "Δημιουγία πολυγώνου"
+
+#: editor/plugins/sprite_editor_plugin.cpp
+#, fuzzy
+msgid "Create CollisionPolygon2D"
+msgstr "Δημιουργία πολυγώνου πλοήγησης"
+
+#: editor/plugins/sprite_editor_plugin.cpp
+#, fuzzy
+msgid "Create LightOccluder2D"
+msgstr "Δημιουργία πολυγώνου εμποδίου"
+
+#: editor/plugins/sprite_editor_plugin.cpp
+#, fuzzy
 msgid "Sprite is empty!"
 msgstr "Η διαδρομή αποθήκευσης είναι άδεια!"
 
@@ -6755,19 +6838,41 @@ msgid "Invalid geometry, can't replace by mesh."
 msgstr ""
 
 #: editor/plugins/sprite_editor_plugin.cpp
+msgid "Invalid geometry, can't create polygon."
+msgstr ""
+
+#: editor/plugins/sprite_editor_plugin.cpp
+msgid "Invalid geometry, can't create collision polygon."
+msgstr ""
+
+#: editor/plugins/sprite_editor_plugin.cpp
+msgid "Invalid geometry, can't create light occluder."
+msgstr ""
+
+#: editor/plugins/sprite_editor_plugin.cpp
 #, fuzzy
 msgid "Sprite"
 msgstr "Kαρέ Sprite"
 
 #: editor/plugins/sprite_editor_plugin.cpp
 #, fuzzy
-msgid "Convert to 2D Mesh"
+msgid "Convert to Mesh2D"
 msgstr "Μετατροπή σε %s"
 
 #: editor/plugins/sprite_editor_plugin.cpp
 #, fuzzy
-msgid "Create 2D Mesh"
-msgstr "Δημιουργία πλέγματος περιγράμματος"
+msgid "Convert to Polygon2D"
+msgstr "Μετακίνηση πολυγώνου"
+
+#: editor/plugins/sprite_editor_plugin.cpp
+#, fuzzy
+msgid "Create CollisionPolygon2D Sibling"
+msgstr "Δημιουργία πολυγώνου πλοήγησης"
+
+#: editor/plugins/sprite_editor_plugin.cpp
+#, fuzzy
+msgid "Create LightOccluder2D Sibling"
+msgstr "Δημιουργία πολυγώνου εμποδίου"
 
 #: editor/plugins/sprite_editor_plugin.cpp
 msgid "Simplification: "
@@ -7393,6 +7498,11 @@ msgstr "Πρόγραμμα σκίασης"
 #, fuzzy
 msgid "Duplicate Nodes"
 msgstr "Διπλασιασμός κόμβων"
+
+#: editor/plugins/visual_shader_editor_plugin.cpp
+#, fuzzy
+msgid "Delete Nodes"
+msgstr "Διαγραφή Κόμβων"
 
 #: editor/plugins/visual_shader_editor_plugin.cpp
 msgid "Visual Shader Input Type Changed"
@@ -8626,10 +8736,6 @@ msgstr "Εκκαθάριση κληρονομικότητας"
 #, fuzzy
 msgid "Open documentation"
 msgstr "Άνοιγμα ηλεκτρονικής τεκμηρίωσης της Godot"
-
-#: editor/scene_tree_dock.cpp
-msgid "Delete Node(s)"
-msgstr "Διαγραφή Κόμβων"
 
 #: editor/scene_tree_dock.cpp
 msgid "Add Child Node"
@@ -10529,13 +10635,16 @@ msgstr ""
 msgid "Varyings can only be assigned in vertex function."
 msgstr ""
 
+#~ msgid "Snap (s): "
+#~ msgstr "Κούμπωμα (s): "
+
+#~ msgid "Insert keys."
+#~ msgstr "Εισαγωγή κλειδιών."
+
 #~ msgid "Instance the selected scene(s) as child of the selected node."
 #~ msgstr ""
 #~ "Δημιουργία στιγμιοτύπων των επιλεγμένων σκηνών ως παιδιά του επιλεγμένου "
 #~ "κόμβου."
-
-#~ msgid "FPS"
-#~ msgstr "FPS"
 
 #~ msgid "Warnings:"
 #~ msgstr "Προειδοποιήσεις:"

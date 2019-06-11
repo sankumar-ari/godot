@@ -112,7 +112,12 @@ void main() {
 #ifdef USE_INSTANCING
 	mat4 extra_matrix_instance = extra_matrix * transpose(mat4(instance_xform0, instance_xform1, instance_xform2, vec4(0.0, 0.0, 0.0, 1.0)));
 	color *= instance_color;
+
+#ifdef USE_INSTANCE_CUSTOM
 	vec4 instance_custom = instance_custom_data;
+#else
+	vec4 instance_custom = vec4(0.0);
+#endif
 
 #else
 	mat4 extra_matrix_instance = extra_matrix;
@@ -220,28 +225,24 @@ VERTEX_SHADER_CODE
 /* clang-format off */
 [fragment]
 
+// texture2DLodEXT and textureCubeLodEXT are fragment shader specific.
+// Do not copy these defines in the vertex section.
 #ifndef USE_GLES_OVER_GL
-
 #ifdef GL_EXT_shader_texture_lod
 #extension GL_EXT_shader_texture_lod : enable
 #define texture2DLod(img, coord, lod) texture2DLodEXT(img, coord, lod)
 #define textureCubeLod(img, coord, lod) textureCubeLodEXT(img, coord, lod)
 #endif
-
-#endif
+#endif // !USE_GLES_OVER_GL
 
 #ifdef GL_ARB_shader_texture_lod
 #extension GL_ARB_shader_texture_lod : enable
 #endif
 
-
 #if !defined(GL_EXT_shader_texture_lod) && !defined(GL_ARB_shader_texture_lod)
 #define texture2DLod(img, coord, lod) texture2D(img, coord, lod)
 #define textureCubeLod(img, coord, lod) textureCube(img, coord, lod)
 #endif
-
-
-
 
 #ifdef USE_GLES_OVER_GL
 #define lowp
@@ -351,7 +352,7 @@ void main() {
 	vec4 color = color_interp;
 	vec2 uv = uv_interp;
 #ifdef USE_FORCE_REPEAT
-	//needs to use this to workaround GLES2/WebGL1 forcing tiling that textures that dont support it
+	//needs to use this to workaround GLES2/WebGL1 forcing tiling that textures that don't support it
 	uv = mod(uv, vec2(1.0, 1.0));
 #endif
 

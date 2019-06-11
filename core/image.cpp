@@ -725,6 +725,131 @@ static void _scale_nearest(const uint8_t *__restrict p_src, uint8_t *__restrict 
 	}
 }
 
+#define LANCZOS_TYPE 3
+
+static float _lanczos(float p_x) {
+	return Math::abs(p_x) >= LANCZOS_TYPE ? 0 : Math::sincn(p_x) * Math::sincn(p_x / LANCZOS_TYPE);
+}
+
+template <int CC, class T>
+static void _scale_lanczos(const uint8_t *__restrict p_src, uint8_t *__restrict p_dst, uint32_t p_src_width, uint32_t p_src_height, uint32_t p_dst_width, uint32_t p_dst_height) {
+
+	int32_t src_width = p_src_width;
+	int32_t src_height = p_src_height;
+	int32_t dst_height = p_dst_height;
+	int32_t dst_width = p_dst_width;
+
+	uint32_t buffer_size = src_height * dst_width * CC;
+	float *buffer = memnew_arr(float, buffer_size); // Store the first pass in a buffer
+
+	{ // FIRST PASS (horizontal)
+
+		float x_scale = float(src_width) / float(dst_width);
+
+		float scale_factor = MAX(x_scale, 1); // A larger kernel is required only when downscaling
+		int32_t half_kernel = LANCZOS_TYPE * scale_factor;
+
+		float *kernel = memnew_arr(float, half_kernel * 2);
+
+		for (int32_t buffer_x = 0; buffer_x < dst_width; buffer_x++) {
+
+			float src_real_x = buffer_x * x_scale;
+			int32_t src_x = src_real_x;
+
+			int32_t start_x = MAX(0, src_x - half_kernel + 1);
+			int32_t end_x = MIN(src_width - 1, src_x + half_kernel);
+
+			// Create the kernel used by all the pixels of the column
+			for (int32_t target_x = start_x; target_x <= end_x; target_x++)
+				kernel[target_x - start_x] = _lanczos((src_real_x - target_x) / scale_factor);
+
+			for (int32_t buffer_y = 0; buffer_y < src_height; buffer_y++) {
+
+				float pixel[CC] = { 0 };
+				float weight = 0;
+
+				for (int32_t target_x = start_x; target_x <= end_x; target_x++) {
+
+					float lanczos_val = kernel[target_x - start_x];
+					weight += lanczos_val;
+
+					const T *__restrict src_data = ((const T *)p_src) + (buffer_y * src_width + target_x) * CC;
+
+					for (uint32_t i = 0; i < CC; i++) {
+						if (sizeof(T) == 2) //half float
+							pixel[i] += Math::half_to_float(src_data[i]) * lanczos_val;
+						else
+							pixel[i] += src_data[i] * lanczos_val;
+					}
+				}
+
+				float *dst_data = ((float *)buffer) + (buffer_y * dst_width + buffer_x) * CC;
+
+				for (uint32_t i = 0; i < CC; i++)
+					dst_data[i] = pixel[i] / weight; // Normalize the sum of all the samples
+			}
+		}
+
+		memdelete_arr(kernel);
+	} // End of first pass
+
+	{ // SECOND PASS (vertical + result)
+
+		float y_scale = float(src_height) / float(dst_height);
+
+		float scale_factor = MAX(y_scale, 1);
+		int32_t half_kernel = LANCZOS_TYPE * scale_factor;
+
+		float *kernel = memnew_arr(float, half_kernel * 2);
+
+		for (int32_t dst_y = 0; dst_y < dst_height; dst_y++) {
+
+			float buffer_real_y = dst_y * y_scale;
+			int32_t buffer_y = buffer_real_y;
+
+			int32_t start_y = MAX(0, buffer_y - half_kernel + 1);
+			int32_t end_y = MIN(src_height - 1, buffer_y + half_kernel);
+
+			for (int32_t target_y = start_y; target_y <= end_y; target_y++)
+				kernel[target_y - start_y] = _lanczos((buffer_real_y - target_y) / scale_factor);
+
+			for (int32_t dst_x = 0; dst_x < dst_width; dst_x++) {
+
+				float pixel[CC] = { 0 };
+				float weight = 0;
+
+				for (int32_t target_y = start_y; target_y <= end_y; target_y++) {
+
+					float lanczos_val = kernel[target_y - start_y];
+					weight += lanczos_val;
+
+					float *buffer_data = ((float *)buffer) + (target_y * dst_width + dst_x) * CC;
+
+					for (uint32_t i = 0; i < CC; i++)
+						pixel[i] += buffer_data[i] * lanczos_val;
+				}
+
+				T *dst_data = ((T *)p_dst) + (dst_y * dst_width + dst_x) * CC;
+
+				for (uint32_t i = 0; i < CC; i++) {
+					pixel[i] /= weight;
+
+					if (sizeof(T) == 1) //byte
+						dst_data[i] = CLAMP(Math::fast_ftoi(pixel[i]), 0, 255);
+					else if (sizeof(T) == 2) //half float
+						dst_data[i] = Math::make_half_float(pixel[i]);
+					else // float
+						dst_data[i] = pixel[i];
+				}
+			}
+		}
+
+		memdelete_arr(kernel);
+	} // End of second pass
+
+	memdelete_arr(buffer);
+}
+
 static void _overlay(const uint8_t *__restrict p_src, uint8_t *__restrict p_dst, float p_alpha, uint32_t p_width, uint32_t p_height, uint32_t p_pixel_size) {
 
 	uint16_t alpha = CLAMP((uint16_t)(p_alpha * 256.0f), 0, 256);
@@ -936,6 +1061,31 @@ void Image::resize(int p_width, int p_height, Interpolation p_interpolation) {
 					case 4: _scale_cubic<2, uint16_t>(r_ptr, w_ptr, width, height, p_width, p_height); break;
 					case 6: _scale_cubic<3, uint16_t>(r_ptr, w_ptr, width, height, p_width, p_height); break;
 					case 8: _scale_cubic<4, uint16_t>(r_ptr, w_ptr, width, height, p_width, p_height); break;
+				}
+			}
+		} break;
+		case INTERPOLATE_LANCZOS: {
+
+			if (format >= FORMAT_L8 && format <= FORMAT_RGBA8) {
+				switch (get_format_pixel_size(format)) {
+					case 1: _scale_lanczos<1, uint8_t>(r_ptr, w_ptr, width, height, p_width, p_height); break;
+					case 2: _scale_lanczos<2, uint8_t>(r_ptr, w_ptr, width, height, p_width, p_height); break;
+					case 3: _scale_lanczos<3, uint8_t>(r_ptr, w_ptr, width, height, p_width, p_height); break;
+					case 4: _scale_lanczos<4, uint8_t>(r_ptr, w_ptr, width, height, p_width, p_height); break;
+				}
+			} else if (format >= FORMAT_RF && format <= FORMAT_RGBAF) {
+				switch (get_format_pixel_size(format)) {
+					case 4: _scale_lanczos<1, float>(r_ptr, w_ptr, width, height, p_width, p_height); break;
+					case 8: _scale_lanczos<2, float>(r_ptr, w_ptr, width, height, p_width, p_height); break;
+					case 12: _scale_lanczos<3, float>(r_ptr, w_ptr, width, height, p_width, p_height); break;
+					case 16: _scale_lanczos<4, float>(r_ptr, w_ptr, width, height, p_width, p_height); break;
+				}
+			} else if (format >= FORMAT_RH && format <= FORMAT_RGBAH) {
+				switch (get_format_pixel_size(format)) {
+					case 2: _scale_lanczos<1, uint16_t>(r_ptr, w_ptr, width, height, p_width, p_height); break;
+					case 4: _scale_lanczos<2, uint16_t>(r_ptr, w_ptr, width, height, p_width, p_height); break;
+					case 6: _scale_lanczos<3, uint16_t>(r_ptr, w_ptr, width, height, p_width, p_height); break;
+					case 8: _scale_lanczos<4, uint16_t>(r_ptr, w_ptr, width, height, p_width, p_height); break;
 				}
 			}
 		} break;
@@ -1266,7 +1416,8 @@ void Image::shrink_x2() {
 				case FORMAT_RGBAH: _generate_po2_mipmap<uint16_t, 4, false, Image::average_4_half, Image::renormalize_half>(reinterpret_cast<const uint16_t *>(r.ptr()), reinterpret_cast<uint16_t *>(w.ptr()), width, height); break;
 
 				case FORMAT_RGBE9995: _generate_po2_mipmap<uint32_t, 1, false, Image::average_4_rgbe9995, Image::renormalize_rgbe9995>(reinterpret_cast<const uint32_t *>(r.ptr()), reinterpret_cast<uint32_t *>(w.ptr()), width, height); break;
-				default: {}
+				default: {
+				}
 			}
 		}
 
@@ -1398,7 +1549,8 @@ Error Image::generate_mipmaps(bool p_renormalize) {
 					_generate_po2_mipmap<uint32_t, 1, false, Image::average_4_rgbe9995, Image::renormalize_rgbe9995>(reinterpret_cast<const uint32_t *>(&wp[prev_ofs]), reinterpret_cast<uint32_t *>(&wp[ofs]), prev_w, prev_h);
 
 				break;
-			default: {}
+			default: {
+			}
 		}
 
 		prev_ofs = ofs;
@@ -1612,7 +1764,8 @@ void Image::create(const char **p_xpm) {
 				if (y == (size_height - 1))
 					status = DONE;
 			} break;
-			default: {}
+			default: {
+			}
 		}
 
 		line++;
@@ -1685,7 +1838,8 @@ bool Image::is_invisible() const {
 		case FORMAT_DXT5: {
 			detected = true;
 		} break;
-		default: {}
+		default: {
+		}
 	}
 
 	return !detected;
@@ -1729,7 +1883,8 @@ Image::AlphaMode Image::detect_alpha() const {
 		case FORMAT_DXT5: {
 			detected = true;
 		} break;
-		default: {}
+		default: {
+		}
 	}
 
 	if (detected)
@@ -1871,7 +2026,7 @@ Image::Image(int p_width, int p_height, bool p_mipmaps, Format p_format, const P
 
 Rect2 Image::get_used_rect() const {
 
-	if (format != FORMAT_LA8 && format != FORMAT_RGBA8)
+	if (format != FORMAT_LA8 && format != FORMAT_RGBA8 && format != FORMAT_RGBAF && format != FORMAT_RGBAH && format != FORMAT_RGBA4444 && format != FORMAT_RGBA5551)
 		return Rect2(Point2(), Size2(width, height));
 
 	int len = data.size();
@@ -1879,17 +2034,13 @@ Rect2 Image::get_used_rect() const {
 	if (len == 0)
 		return Rect2();
 
-	//int data_size = len;
-	PoolVector<uint8_t>::Read r = data.read();
-	const unsigned char *rptr = r.ptr();
-
-	int ps = format == FORMAT_LA8 ? 2 : 4;
+	const_cast<Image *>(this)->lock();
 	int minx = 0xFFFFFF, miny = 0xFFFFFFF;
 	int maxx = -1, maxy = -1;
 	for (int j = 0; j < height; j++) {
 		for (int i = 0; i < width; i++) {
 
-			bool opaque = rptr[(j * width + i) * ps + (ps - 1)] > 2;
+			bool opaque = get_pixel(i, j).a > 0.99;
 			if (!opaque)
 				continue;
 			if (i > maxx)
@@ -1902,6 +2053,8 @@ Rect2 Image::get_used_rect() const {
 				miny = j;
 		}
 	}
+
+	const_cast<Image *>(this)->unlock();
 
 	if (maxx == -1)
 		return Rect2();
@@ -2682,6 +2835,7 @@ void Image::_bind_methods() {
 	BIND_ENUM_CONSTANT(INTERPOLATE_BILINEAR);
 	BIND_ENUM_CONSTANT(INTERPOLATE_CUBIC);
 	BIND_ENUM_CONSTANT(INTERPOLATE_TRILINEAR);
+	BIND_ENUM_CONSTANT(INTERPOLATE_LANCZOS);
 
 	BIND_ENUM_CONSTANT(ALPHA_NONE);
 	BIND_ENUM_CONSTANT(ALPHA_BIT);

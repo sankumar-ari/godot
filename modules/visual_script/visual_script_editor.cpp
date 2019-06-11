@@ -37,6 +37,7 @@
 #include "core/variant.h"
 #include "editor/editor_node.h"
 #include "editor/editor_resource_preview.h"
+#include "scene/main/viewport.h"
 #include "visual_script_expression.h"
 #include "visual_script_flow_control.h"
 #include "visual_script_func_nodes.h"
@@ -579,7 +580,7 @@ void VisualScriptEditor::_update_graph(int p_only_id) {
 			if (gnode->is_comment())
 				sbf = EditorNode::get_singleton()->get_theme_base()->get_theme()->get_stylebox("comment", "GraphNode");
 
-			Color c = sbf->get_border_color(MARGIN_TOP);
+			Color c = sbf->get_border_color();
 			c.a = 1;
 			if (EditorSettings::get_singleton()->get("interface/theme/use_graph_node_headers")) {
 				Color mono_color = ((c.r + c.g + c.b) / 3) < 0.7 ? Color(1.0, 1.0, 1.0) : Color(0.0, 0.0, 0.0);
@@ -1329,8 +1330,9 @@ void VisualScriptEditor::_input(const Ref<InputEvent> &p_event) {
 	}
 }
 
-void VisualScriptEditor::_generic_search() {
-	new_connect_node_select->select_from_visual_script(String(""), false);
+void VisualScriptEditor::_generic_search(String p_base_type) {
+	port_action_pos = graph->get_viewport()->get_mouse_position() - graph->get_global_position();
+	new_connect_node_select->select_from_visual_script(p_base_type, false);
 }
 
 void VisualScriptEditor::_members_gui_input(const Ref<InputEvent> &p_event) {
@@ -1785,7 +1787,6 @@ void VisualScriptEditor::drop_data_fw(const Point2 &p_point, const Variant &p_da
 				call->set_base_path(sn->get_path_to(node));
 				call->set_base_type(node->get_class());
 				n = call;
-
 				method_select->select_from_instance(node);
 				selecting_method_id = base_id;
 			}
@@ -2040,7 +2041,7 @@ void VisualScriptEditor::set_edit_state(const Variant &p_state) {
 
 	Dictionary d = p_state;
 	if (d.has("function")) {
-		edited_func = p_state;
+		edited_func = d["function"];
 		selected = edited_func;
 	}
 
@@ -2097,6 +2098,14 @@ void VisualScriptEditor::goto_line(int p_line, bool p_with_error) {
 			return;
 		}
 	}
+}
+
+void VisualScriptEditor::set_executing_line(int p_line) {
+	// todo: add a way to show which node is executing right now.
+}
+
+void VisualScriptEditor::clear_executing_line() {
+	// todo: add a way to show which node is executing right now.
 }
 
 void VisualScriptEditor::trim_trailing_whitespace() {
@@ -2209,7 +2218,7 @@ Control *VisualScriptEditor::get_edit_menu() {
 
 void VisualScriptEditor::_change_base_type() {
 
-	select_base_type->popup_create(true);
+	select_base_type->popup_create(true, true);
 }
 
 void VisualScriptEditor::clear_edit_menu() {
@@ -2717,93 +2726,98 @@ void VisualScriptEditor::_selected_connect_node(const String &p_text, const Stri
 		Ref<VisualScriptFunctionCall> vsfc = vsn;
 		vsfc->set_function(p_text);
 
-		VisualScriptNode::TypeGuess tg = _guess_output_type(port_action_node, port_action_output, vn);
-		if (tg.type == Variant::OBJECT) {
-			vsfc->set_call_mode(VisualScriptFunctionCall::CALL_MODE_INSTANCE);
-			vsfc->set_base_type(String(""));
-			if (tg.gdclass != StringName()) {
-				vsfc->set_base_type(tg.gdclass);
+		if (p_connecting) {
+			VisualScriptNode::TypeGuess tg = _guess_output_type(port_action_node, port_action_output, vn);
 
-			} else if (script->get_node(edited_func, port_action_node).is_valid()) {
-				PropertyHint hint = script->get_node(edited_func, port_action_node)->get_output_value_port_info(port_action_output).hint;
-				String base_type = script->get_node(edited_func, port_action_node)->get_output_value_port_info(port_action_output).hint_string;
+			if (tg.type == Variant::OBJECT) {
+				vsfc->set_call_mode(VisualScriptFunctionCall::CALL_MODE_INSTANCE);
+				vsfc->set_base_type(String(""));
+				if (tg.gdclass != StringName()) {
+					vsfc->set_base_type(tg.gdclass);
 
-				if (base_type != String() && hint == PROPERTY_HINT_TYPE_STRING) {
-					vsfc->set_base_type(base_type);
+				} else if (script->get_node(edited_func, port_action_node).is_valid()) {
+					PropertyHint hint = script->get_node(edited_func, port_action_node)->get_output_value_port_info(port_action_output).hint;
+					String base_type = script->get_node(edited_func, port_action_node)->get_output_value_port_info(port_action_output).hint_string;
+
+					if (base_type != String() && hint == PROPERTY_HINT_TYPE_STRING) {
+						vsfc->set_base_type(base_type);
+					}
+					if (p_text == "call" || p_text == "call_deferred") {
+						vsfc->set_function(String(""));
+					}
 				}
-				if (p_text == "call" || p_text == "call_deferred") {
-					vsfc->set_function(String(""));
+				if (tg.script.is_valid()) {
+					vsfc->set_base_script(tg.script->get_path());
 				}
+			} else if (tg.type == Variant::NIL) {
+				vsfc->set_call_mode(VisualScriptFunctionCall::CALL_MODE_INSTANCE);
+				vsfc->set_base_type(String(""));
+			} else {
+				vsfc->set_call_mode(VisualScriptFunctionCall::CALL_MODE_BASIC_TYPE);
+				vsfc->set_basic_type(tg.type);
 			}
-			if (tg.script.is_valid()) {
-				vsfc->set_base_script(tg.script->get_path());
-			}
-		} else if (tg.type == Variant::NIL) {
-			vsfc->set_call_mode(VisualScriptFunctionCall::CALL_MODE_INSTANCE);
-			vsfc->set_base_type(String(""));
-		} else {
-			vsfc->set_call_mode(VisualScriptFunctionCall::CALL_MODE_BASIC_TYPE);
-			vsfc->set_basic_type(tg.type);
 		}
 	}
 
-	if (Object::cast_to<VisualScriptPropertySet>(vsn.ptr())) {
+	// if connecting from another node the call mode shouldn't be self
+	if (p_connecting) {
+		if (Object::cast_to<VisualScriptPropertySet>(vsn.ptr())) {
+			Ref<VisualScriptPropertySet> vsp = vsn;
 
-		Ref<VisualScriptPropertySet> vsp = vsn;
+			VisualScriptNode::TypeGuess tg = _guess_output_type(port_action_node, port_action_output, vn);
+			if (tg.type == Variant::OBJECT) {
+				vsp->set_call_mode(VisualScriptPropertySet::CALL_MODE_INSTANCE);
+				vsp->set_base_type(String(""));
+				if (tg.gdclass != StringName()) {
+					vsp->set_base_type(tg.gdclass);
 
-		VisualScriptNode::TypeGuess tg = _guess_output_type(port_action_node, port_action_output, vn);
-		if (tg.type == Variant::OBJECT) {
-			vsp->set_call_mode(VisualScriptPropertySet::CALL_MODE_INSTANCE);
-			vsp->set_base_type(String(""));
-			if (tg.gdclass != StringName()) {
-				vsp->set_base_type(tg.gdclass);
+				} else if (script->get_node(edited_func, port_action_node).is_valid()) {
+					PropertyHint hint = script->get_node(edited_func, port_action_node)->get_output_value_port_info(port_action_output).hint;
+					String base_type = script->get_node(edited_func, port_action_node)->get_output_value_port_info(port_action_output).hint_string;
 
-			} else if (script->get_node(edited_func, port_action_node).is_valid()) {
-				PropertyHint hint = script->get_node(edited_func, port_action_node)->get_output_value_port_info(port_action_output).hint;
-				String base_type = script->get_node(edited_func, port_action_node)->get_output_value_port_info(port_action_output).hint_string;
-
-				if (base_type != String() && hint == PROPERTY_HINT_TYPE_STRING) {
-					vsp->set_base_type(base_type);
+					if (base_type != String() && hint == PROPERTY_HINT_TYPE_STRING) {
+						vsp->set_base_type(base_type);
+					}
 				}
+				if (tg.script.is_valid()) {
+					vsp->set_base_script(tg.script->get_path());
+				}
+			} else if (tg.type == Variant::NIL) {
+				vsp->set_call_mode(VisualScriptPropertySet::CALL_MODE_INSTANCE);
+				vsp->set_base_type(String(""));
+			} else {
+				vsp->set_call_mode(VisualScriptPropertySet::CALL_MODE_BASIC_TYPE);
+				vsp->set_basic_type(tg.type);
 			}
-			if (tg.script.is_valid()) {
-				vsp->set_base_script(tg.script->get_path());
-			}
-		} else if (tg.type == Variant::NIL) {
-			vsp->set_call_mode(VisualScriptPropertySet::CALL_MODE_INSTANCE);
-			vsp->set_base_type(String(""));
-		} else {
-			vsp->set_call_mode(VisualScriptPropertySet::CALL_MODE_BASIC_TYPE);
-			vsp->set_basic_type(tg.type);
 		}
-	}
 
-	if (Object::cast_to<VisualScriptPropertyGet>(vsn.ptr())) {
-		Ref<VisualScriptPropertyGet> vsp = vsn;
+		if (Object::cast_to<VisualScriptPropertyGet>(vsn.ptr())) {
+			Ref<VisualScriptPropertyGet> vsp = vsn;
 
-		VisualScriptNode::TypeGuess tg = _guess_output_type(port_action_node, port_action_output, vn);
-		if (tg.type == Variant::OBJECT) {
-			vsp->set_call_mode(VisualScriptPropertyGet::CALL_MODE_INSTANCE);
-			vsp->set_base_type(String(""));
-			if (tg.gdclass != StringName()) {
-				vsp->set_base_type(tg.gdclass);
+			VisualScriptNode::TypeGuess tg = _guess_output_type(port_action_node, port_action_output, vn);
+			if (tg.type == Variant::OBJECT) {
+				vsp->set_call_mode(VisualScriptPropertyGet::CALL_MODE_INSTANCE);
+				vsp->set_base_type(String(""));
+				if (tg.gdclass != StringName()) {
+					vsp->set_base_type(tg.gdclass);
 
-			} else if (script->get_node(edited_func, port_action_node).is_valid()) {
-				PropertyHint hint = script->get_node(edited_func, port_action_node)->get_output_value_port_info(port_action_output).hint;
-				String base_type = script->get_node(edited_func, port_action_node)->get_output_value_port_info(port_action_output).hint_string;
-				if (base_type != String() && hint == PROPERTY_HINT_TYPE_STRING) {
-					vsp->set_base_type(base_type);
+				} else if (script->get_node(edited_func, port_action_node).is_valid()) {
+					PropertyHint hint = script->get_node(edited_func, port_action_node)->get_output_value_port_info(port_action_output).hint;
+					String base_type = script->get_node(edited_func, port_action_node)->get_output_value_port_info(port_action_output).hint_string;
+					if (base_type != String() && hint == PROPERTY_HINT_TYPE_STRING) {
+						vsp->set_base_type(base_type);
+					}
 				}
+				if (tg.script.is_valid()) {
+					vsp->set_base_script(tg.script->get_path());
+				}
+			} else if (tg.type == Variant::NIL) {
+				vsp->set_call_mode(VisualScriptPropertyGet::CALL_MODE_INSTANCE);
+				vsp->set_base_type(String(""));
+			} else {
+				vsp->set_call_mode(VisualScriptPropertyGet::CALL_MODE_BASIC_TYPE);
+				vsp->set_basic_type(tg.type);
 			}
-			if (tg.script.is_valid()) {
-				vsp->set_base_script(tg.script->get_path());
-			}
-		} else if (tg.type == Variant::NIL) {
-			vsp->set_call_mode(VisualScriptPropertyGet::CALL_MODE_INSTANCE);
-			vsp->set_base_type(String(""));
-		} else {
-			vsp->set_call_mode(VisualScriptPropertyGet::CALL_MODE_BASIC_TYPE);
-			vsp->set_basic_type(tg.type);
 		}
 	}
 	Ref<VisualScriptNode> vnode_old = script->get_node(edited_func, port_action_node);
@@ -3054,10 +3068,10 @@ void VisualScriptEditor::_notification(int p_what) {
 			Ref<StyleBoxFlat> sb = tm->get_stylebox("frame", "GraphNode");
 			if (!sb.is_null()) {
 				Ref<StyleBoxFlat> frame_style = sb->duplicate();
-				Color c = sb->get_border_color(MARGIN_TOP);
+				Color c = sb->get_border_color();
 				Color cn = E->get().second;
 				cn.a = c.a;
-				frame_style->set_border_color_all(cn);
+				frame_style->set_border_color(cn);
 				node_styles[E->get().first] = frame_style;
 			}
 		}
@@ -3146,7 +3160,7 @@ void VisualScriptEditor::_menu_option(int p_what) {
 
 		} break;
 		case EDIT_FIND_NODE_TYPE: {
-			_generic_search();
+			_generic_search(script->get_instance_base_type());
 		} break;
 		case EDIT_COPY_NODES:
 		case EDIT_CUT_NODES: {
@@ -3564,7 +3578,7 @@ VisualScriptEditor::VisualScriptEditor() {
 	graph->connect("scroll_offset_changed", this, "_graph_ofs_changed");
 
 	select_func_text = memnew(Label);
-	select_func_text->set_text(TTR("Select or create a function to edit graph"));
+	select_func_text->set_text(TTR("Select or create a function to edit its graph."));
 	select_func_text->set_align(Label::ALIGN_CENTER);
 	select_func_text->set_valign(Label::VALIGN_CENTER);
 	select_func_text->set_h_size_flags(SIZE_EXPAND_FILL);
@@ -3605,7 +3619,6 @@ VisualScriptEditor::VisualScriptEditor() {
 	edit_signal_dialog = memnew(AcceptDialog);
 	edit_signal_dialog->get_ok()->set_text(TTR("Close"));
 	add_child(edit_signal_dialog);
-	edit_signal_dialog->set_title(TTR("Edit Signal Arguments:"));
 
 	signal_editor = memnew(VisualScriptEditorSignalEdit);
 	edit_signal_edit = memnew(EditorInspector);
@@ -3616,7 +3629,6 @@ VisualScriptEditor::VisualScriptEditor() {
 	edit_variable_dialog = memnew(AcceptDialog);
 	edit_variable_dialog->get_ok()->set_text(TTR("Close"));
 	add_child(edit_variable_dialog);
-	edit_variable_dialog->set_title(TTR("Edit Variable:"));
 
 	variable_editor = memnew(VisualScriptEditorVariableEdit);
 	edit_variable_edit = memnew(EditorInspector);
@@ -3627,7 +3639,6 @@ VisualScriptEditor::VisualScriptEditor() {
 	select_base_type = memnew(CreateDialog);
 	select_base_type->set_base_type("Object"); //anything goes
 	select_base_type->connect("create", this, "_change_base_type_callback");
-	select_base_type->get_ok()->set_text(TTR("Change"));
 	add_child(select_base_type);
 
 	undo_redo = EditorNode::get_singleton()->get_undo_redo();

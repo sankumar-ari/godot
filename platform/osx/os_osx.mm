@@ -271,6 +271,8 @@ static CVReturn DisplayLinkCallback(CVDisplayLinkRef displayLink, const CVTimeSt
 
 - (void)windowDidExitFullScreen:(NSNotification *)notification {
 	OS_OSX::singleton->zoomed = false;
+	if (!OS_OSX::singleton->resizable)
+		[OS_OSX::singleton->window_object setStyleMask:[OS_OSX::singleton->window_object styleMask] & ~NSWindowStyleMaskResizable];
 }
 
 - (void)windowDidChangeBackingProperties:(NSNotification *)notification {
@@ -335,6 +337,11 @@ static CVReturn DisplayLinkCallback(CVDisplayLinkRef displayLink, const CVTimeSt
 }
 
 - (void)windowDidMove:(NSNotification *)notification {
+
+	if (OS_OSX::singleton->get_main_loop()) {
+		OS_OSX::singleton->input->release_pressed_events();
+	}
+
 	/*
 	[window->nsgl.context update];
 
@@ -385,7 +392,7 @@ static CVReturn DisplayLinkCallback(CVDisplayLinkRef displayLink, const CVTimeSt
 @interface GodotContentView : NSView <NSTextInputClient> {
 	NSTrackingArea *trackingArea;
 	NSMutableAttributedString *markedText;
-	bool imeMode;
+	bool imeInputEventInProgress;
 }
 - (void)cancelComposition;
 - (BOOL)wantsUpdateLayer;
@@ -411,7 +418,7 @@ static CVReturn DisplayLinkCallback(CVDisplayLinkRef displayLink, const CVTimeSt
 - (id)init {
 	self = [super init];
 	trackingArea = nil;
-	imeMode = false;
+	imeInputEventInProgress = false;
 	[self updateTrackingAreas];
 	[self registerForDraggedTypes:[NSArray arrayWithObject:NSFilenamesPboardType]];
 	markedText = [[NSMutableAttributedString alloc] init];
@@ -445,7 +452,7 @@ static const NSRange kEmptyRange = { NSNotFound, 0 };
 		[markedText initWithString:aString];
 	}
 	if (OS_OSX::singleton->im_active) {
-		imeMode = true;
+		imeInputEventInProgress = true;
 		OS_OSX::singleton->im_text.parse_utf8([[markedText mutableString] UTF8String]);
 		OS_OSX::singleton->im_selection = Point2(selectedRange.location, selectedRange.length);
 
@@ -460,7 +467,7 @@ static const NSRange kEmptyRange = { NSNotFound, 0 };
 }
 
 - (void)unmarkText {
-	imeMode = false;
+	imeInputEventInProgress = false;
 	[[markedText mutableString] setString:@""];
 	if (OS_OSX::singleton->im_active) {
 		OS_OSX::singleton->im_text = String();
@@ -533,6 +540,7 @@ static const NSRange kEmptyRange = { NSNotFound, 0 };
 		ke.osx_state = [event modifierFlags];
 		ke.pressed = true;
 		ke.echo = false;
+		ke.raw = false; // IME input event
 		ke.scancode = 0;
 		ke.unicode = codepoint;
 
@@ -710,8 +718,6 @@ static void _mouseDownEvent(NSEvent *event, int index, int mask, bool pressed) {
 
 	if (OS_OSX::singleton->main_loop && OS_OSX::singleton->mouse_mode != OS::MOUSE_MODE_CAPTURED)
 		OS_OSX::singleton->main_loop->notification(MainLoop::NOTIFICATION_WM_MOUSE_EXIT);
-	if (OS_OSX::singleton->input)
-		OS_OSX::singleton->input->set_mouse_in_window(false);
 }
 
 - (void)mouseEntered:(NSEvent *)event {
@@ -719,8 +725,6 @@ static void _mouseDownEvent(NSEvent *event, int index, int mask, bool pressed) {
 		return;
 	if (OS_OSX::singleton->main_loop && OS_OSX::singleton->mouse_mode != OS::MOUSE_MODE_CAPTURED)
 		OS_OSX::singleton->main_loop->notification(MainLoop::NOTIFICATION_WM_MOUSE_ENTER);
-	if (OS_OSX::singleton->input)
-		OS_OSX::singleton->input->set_mouse_in_window(true);
 
 	OS::CursorShape p_shape = OS_OSX::singleton->cursor_shape;
 	OS_OSX::singleton->cursor_shape = OS::CURSOR_MAX;
@@ -967,10 +971,10 @@ static const _KeyCodeMap _keycodes[55] = {
 	{ 'i', KEY_I },
 	{ 'o', KEY_O },
 	{ 'p', KEY_P },
-	{ '[', KEY_BRACERIGHT },
-	{ ']', KEY_BRACELEFT },
-	{ '{', KEY_BRACERIGHT },
-	{ '}', KEY_BRACELEFT },
+	{ '[', KEY_BRACELEFT },
+	{ ']', KEY_BRACERIGHT },
+	{ '{', KEY_BRACELEFT },
+	{ '}', KEY_BRACERIGHT },
 	{ 'a', KEY_A },
 	{ 's', KEY_S },
 	{ 'd', KEY_D },
@@ -1042,29 +1046,52 @@ static int remapKey(unsigned int key) {
 
 - (void)keyDown:(NSEvent *)event {
 
-	//disable raw input in IME mode
-	if (!imeMode) {
-		OS_OSX::KeyEvent ke;
+	// Ignore all input if IME input is in progress
+	if (!imeInputEventInProgress) {
+		NSString *characters = [event characters];
+		NSUInteger length = [characters length];
 
-		ke.osx_state = [event modifierFlags];
-		ke.pressed = true;
-		ke.echo = [event isARepeat];
-		ke.scancode = remapKey([event keyCode]);
-		ke.unicode = 0;
+		if (!OS_OSX::singleton->im_active && length > 0 && keycode_has_unicode(remapKey([event keyCode]))) {
+			// Fallback unicode character handler used if IME is not active
+			for (NSUInteger i = 0; i < length; i++) {
+				OS_OSX::KeyEvent ke;
 
-		push_to_key_event_buffer(ke);
+				ke.osx_state = [event modifierFlags];
+				ke.pressed = true;
+				ke.echo = [event isARepeat];
+				ke.scancode = remapKey([event keyCode]);
+				ke.raw = true;
+				ke.unicode = [characters characterAtIndex:i];
+
+				push_to_key_event_buffer(ke);
+			}
+		} else {
+			OS_OSX::KeyEvent ke;
+
+			ke.osx_state = [event modifierFlags];
+			ke.pressed = true;
+			ke.echo = [event isARepeat];
+			ke.scancode = remapKey([event keyCode]);
+			ke.raw = false;
+			ke.unicode = 0;
+
+			push_to_key_event_buffer(ke);
+		}
 	}
 
-	if (OS_OSX::singleton->im_active == true)
+	// Pass events to IME handler
+	if (OS_OSX::singleton->im_active)
 		[self interpretKeyEvents:[NSArray arrayWithObject:event]];
 }
 
 - (void)flagsChanged:(NSEvent *)event {
 
-	if (!imeMode) {
+	// Ignore all input if IME input is in progress
+	if (!imeInputEventInProgress) {
 		OS_OSX::KeyEvent ke;
 
 		ke.echo = false;
+		ke.raw = true;
 
 		int key = [event keyCode];
 		int mod = [event modifierFlags];
@@ -1111,17 +1138,37 @@ static int remapKey(unsigned int key) {
 
 - (void)keyUp:(NSEvent *)event {
 
-	if (!imeMode) {
+	// Ignore all input if IME input is in progress
+	if (!imeInputEventInProgress) {
+		NSString *characters = [event characters];
+		NSUInteger length = [characters length];
 
-		OS_OSX::KeyEvent ke;
+		// Fallback unicode character handler used if IME is not active
+		if (!OS_OSX::singleton->im_active && length > 0 && keycode_has_unicode(remapKey([event keyCode]))) {
+			for (NSUInteger i = 0; i < length; i++) {
+				OS_OSX::KeyEvent ke;
 
-		ke.osx_state = [event modifierFlags];
-		ke.pressed = false;
-		ke.echo = false;
-		ke.scancode = remapKey([event keyCode]);
-		ke.unicode = 0;
+				ke.osx_state = [event modifierFlags];
+				ke.pressed = false;
+				ke.echo = [event isARepeat];
+				ke.scancode = remapKey([event keyCode]);
+				ke.raw = true;
+				ke.unicode = [characters characterAtIndex:i];
 
-		push_to_key_event_buffer(ke);
+				push_to_key_event_buffer(ke);
+			}
+		} else {
+			OS_OSX::KeyEvent ke;
+
+			ke.osx_state = [event modifierFlags];
+			ke.pressed = false;
+			ke.echo = [event isARepeat];
+			ke.scancode = remapKey([event keyCode]);
+			ke.raw = true;
+			ke.unicode = 0;
+
+			push_to_key_event_buffer(ke);
+		}
 	}
 }
 
@@ -1548,7 +1595,7 @@ void OS_OSX::delete_main_loop() {
 	main_loop = NULL;
 }
 
-String OS_OSX::get_name() {
+String OS_OSX::get_name() const {
 
 	return "OSX";
 }
@@ -1692,6 +1739,11 @@ void OS_OSX::set_cursor_shape(CursorShape p_shape) {
 	}
 
 	cursor_shape = p_shape;
+}
+
+OS::CursorShape OS_OSX::get_cursor_shape() const {
+
+	return cursor_shape;
 }
 
 void OS_OSX::set_custom_mouse_cursor(const RES &p_cursor, CursorShape p_shape, const Vector2 &p_hotspot) {
@@ -1848,6 +1900,31 @@ void OS_OSX::set_window_title(const String &p_title) {
 	title = p_title;
 
 	[window_object setTitle:[NSString stringWithUTF8String:p_title.utf8().get_data()]];
+}
+
+void OS_OSX::set_native_icon(const String &p_filename) {
+
+	FileAccess *f = FileAccess::open(p_filename, FileAccess::READ);
+	ERR_FAIL_COND(!f);
+
+	Vector<uint8_t> data;
+	uint32_t len = f->get_len();
+	data.resize(len);
+	f->get_buffer((uint8_t *)&data.write[0], len);
+	memdelete(f);
+
+	NSData *icon_data = [[[NSData alloc] initWithBytes:&data.write[0] length:len] autorelease];
+	if (!icon_data) {
+		ERR_EXPLAIN("Error reading icon data");
+		ERR_FAIL();
+	}
+	NSImage *icon = [[[NSImage alloc] initWithData:icon_data] autorelease];
+	if (!icon) {
+		ERR_EXPLAIN("Error loading icon");
+		ERR_FAIL();
+	}
+
+	[NSApp setApplicationIconImage:icon];
 }
 
 void OS_OSX::set_icon(const Ref<Image> &p_icon) {
@@ -2270,12 +2347,12 @@ Size2 OS_OSX::get_window_size() const {
 Size2 OS_OSX::get_real_window_size() const {
 
 	NSRect frame = [window_object frame];
-	return Size2(frame.size.width, frame.size.height);
+	return Size2(frame.size.width, frame.size.height) * _display_scale();
 }
 
 void OS_OSX::set_window_size(const Size2 p_size) {
 
-	Size2 size = p_size;
+	Size2 size = p_size / _display_scale();
 
 	if (get_borderless_window() == false) {
 		// NSRect used by setFrame includes the title bar, so add it to our size.y
@@ -2300,6 +2377,8 @@ void OS_OSX::set_window_fullscreen(bool p_enabled) {
 	if (zoomed != p_enabled) {
 		if (layered_window)
 			set_window_per_pixel_transparency_enabled(false);
+		if (!resizable)
+			[window_object setStyleMask:[window_object styleMask] | NSWindowStyleMaskResizable];
 		[window_object toggleFullScreen:nil];
 	}
 	zoomed = p_enabled;
@@ -2314,7 +2393,7 @@ void OS_OSX::set_window_resizable(bool p_enabled) {
 
 	if (p_enabled)
 		[window_object setStyleMask:[window_object styleMask] | NSWindowStyleMaskResizable];
-	else
+	else if (!zoomed)
 		[window_object setStyleMask:[window_object styleMask] & ~NSWindowStyleMaskResizable];
 
 	resizable = p_enabled;
@@ -2577,30 +2656,44 @@ void OS_OSX::process_key_events() {
 
 		const KeyEvent &ke = key_event_buffer[i];
 
-		if ((i == 0 && ke.scancode == 0) || (i > 0 && key_event_buffer[i - 1].scancode == 0)) {
-			k.instance();
-
-			get_key_modifier_state(ke.osx_state, k);
-			k->set_pressed(ke.pressed);
-			k->set_echo(ke.echo);
-			k->set_scancode(0);
-			k->set_unicode(ke.unicode);
-
-			push_input(k);
-		}
-		if (ke.scancode != 0) {
+		if (ke.raw) {
+			// Non IME input - no composite characters, pass events as is
 			k.instance();
 
 			get_key_modifier_state(ke.osx_state, k);
 			k->set_pressed(ke.pressed);
 			k->set_echo(ke.echo);
 			k->set_scancode(ke.scancode);
-
-			if (i + 1 < key_event_pos && key_event_buffer[i + 1].scancode == 0) {
-				k->set_unicode(key_event_buffer[i + 1].unicode);
-			}
+			k->set_unicode(ke.unicode);
 
 			push_input(k);
+		} else {
+			// IME input
+			if ((i == 0 && ke.scancode == 0) || (i > 0 && key_event_buffer[i - 1].scancode == 0)) {
+				k.instance();
+
+				get_key_modifier_state(ke.osx_state, k);
+				k->set_pressed(ke.pressed);
+				k->set_echo(ke.echo);
+				k->set_scancode(0);
+				k->set_unicode(ke.unicode);
+
+				push_input(k);
+			}
+			if (ke.scancode != 0) {
+				k.instance();
+
+				get_key_modifier_state(ke.osx_state, k);
+				k->set_pressed(ke.pressed);
+				k->set_echo(ke.echo);
+				k->set_scancode(ke.scancode);
+
+				if (i + 1 < key_event_pos && key_event_buffer[i + 1].scancode == 0) {
+					k->set_unicode(key_event_buffer[i + 1].unicode);
+				}
+
+				push_input(k);
+			}
 		}
 	}
 

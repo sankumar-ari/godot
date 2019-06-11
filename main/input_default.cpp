@@ -623,7 +623,8 @@ bool InputDefault::is_emulating_mouse_from_touch() const {
 	return emulate_mouse_from_touch;
 }
 
-Input::CursorShape InputDefault::get_default_cursor_shape() {
+Input::CursorShape InputDefault::get_default_cursor_shape() const {
+
 	return default_shape;
 }
 
@@ -638,26 +639,16 @@ void InputDefault::set_default_cursor_shape(CursorShape p_shape) {
 	parse_input_event(mm);
 }
 
+Input::CursorShape InputDefault::get_current_cursor_shape() const {
+
+	return (Input::CursorShape)OS::get_singleton()->get_cursor_shape();
+}
+
 void InputDefault::set_custom_mouse_cursor(const RES &p_cursor, CursorShape p_shape, const Vector2 &p_hotspot) {
 	if (Engine::get_singleton()->is_editor_hint())
 		return;
 
 	OS::get_singleton()->set_custom_mouse_cursor(p_cursor, (OS::CursorShape)p_shape, p_hotspot);
-}
-
-void InputDefault::set_mouse_in_window(bool p_in_window) {
-	/* no longer supported, leaving this for reference to anyone who might want to implement hardware cursors
-	if (custom_cursor.is_valid()) {
-
-		if (p_in_window) {
-			set_mouse_mode(MOUSE_MODE_HIDDEN);
-			VisualServer::get_singleton()->cursor_set_visible(true);
-		} else {
-			set_mouse_mode(MOUSE_MODE_VISIBLE);
-			VisualServer::get_singleton()->cursor_set_visible(false);
-		}
-	}
-	*/
 }
 
 void InputDefault::accumulate_input_event(const Ref<InputEvent> &p_event) {
@@ -684,6 +675,19 @@ void InputDefault::flush_accumulated_events() {
 void InputDefault::set_use_accumulated_input(bool p_enable) {
 
 	use_accumulated_input = p_enable;
+}
+
+void InputDefault::release_pressed_events() {
+
+	flush_accumulated_events(); // this is needed to release actions strengths
+
+	keys_pressed.clear();
+	joy_buttons_pressed.clear();
+	_joy_axis.clear();
+
+	for (Map<StringName, InputDefault::Action>::Element *E = action_state.front(); E; E = E->next()) {
+		action_release(E->key());
+	}
 }
 
 InputDefault::InputDefault() {

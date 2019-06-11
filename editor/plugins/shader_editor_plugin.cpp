@@ -84,7 +84,9 @@ void ShaderTextEditor::_load_theme_settings() {
 	Color function_color = EDITOR_GET("text_editor/highlighting/function_color");
 	Color member_variable_color = EDITOR_GET("text_editor/highlighting/member_variable_color");
 	Color mark_color = EDITOR_GET("text_editor/highlighting/mark_color");
+	Color bookmark_color = EDITOR_GET("text_editor/highlighting/bookmark_color");
 	Color breakpoint_color = EDITOR_GET("text_editor/highlighting/breakpoint_color");
+	Color executing_line_color = EDITOR_GET("text_editor/highlighting/executing_line_color");
 	Color code_folding_color = EDITOR_GET("text_editor/highlighting/code_folding_color");
 	Color search_result_color = EDITOR_GET("text_editor/highlighting/search_result_color");
 	Color search_result_border_color = EDITOR_GET("text_editor/highlighting/search_result_border_color");
@@ -112,7 +114,9 @@ void ShaderTextEditor::_load_theme_settings() {
 	get_text_edit()->add_color_override("function_color", function_color);
 	get_text_edit()->add_color_override("member_variable_color", member_variable_color);
 	get_text_edit()->add_color_override("mark_color", mark_color);
+	get_text_edit()->add_color_override("bookmark_color", bookmark_color);
 	get_text_edit()->add_color_override("breakpoint_color", breakpoint_color);
+	get_text_edit()->add_color_override("executing_line_color", executing_line_color);
 	get_text_edit()->add_color_override("code_folding_color", code_folding_color);
 	get_text_edit()->add_color_override("search_result_color", search_result_color);
 	get_text_edit()->add_color_override("search_result_border_color", search_result_border_color);
@@ -248,19 +252,19 @@ void ShaderEditor::_menu_option(int p_option) {
 		} break;
 		case EDIT_INDENT_LEFT: {
 
-			TextEdit *tx = shader_editor->get_text_edit();
 			if (shader.is_null())
 				return;
 
+			TextEdit *tx = shader_editor->get_text_edit();
 			tx->indent_left();
 
 		} break;
 		case EDIT_INDENT_RIGHT: {
 
-			TextEdit *tx = shader_editor->get_text_edit();
 			if (shader.is_null())
 				return;
 
+			TextEdit *tx = shader_editor->get_text_edit();
 			tx->indent_right();
 
 		} break;
@@ -272,54 +276,10 @@ void ShaderEditor::_menu_option(int p_option) {
 		} break;
 		case EDIT_TOGGLE_COMMENT: {
 
-			TextEdit *tx = shader_editor->get_text_edit();
 			if (shader.is_null())
 				return;
 
-			tx->begin_complex_operation();
-			if (tx->is_selection_active()) {
-				int begin = tx->get_selection_from_line();
-				int end = tx->get_selection_to_line();
-
-				// End of selection ends on the first column of the last line, ignore it.
-				if (tx->get_selection_to_column() == 0)
-					end -= 1;
-
-				// Check if all lines in the selected block are commented
-				bool is_commented = true;
-				for (int i = begin; i <= end; i++) {
-					if (!tx->get_line(i).begins_with("//")) {
-						is_commented = false;
-						break;
-					}
-				}
-				for (int i = begin; i <= end; i++) {
-					String line_text = tx->get_line(i);
-
-					if (line_text.strip_edges().empty()) {
-						line_text = "//";
-					} else {
-						if (is_commented) {
-							line_text = line_text.substr(2, line_text.length());
-						} else {
-							line_text = "//" + line_text;
-						}
-					}
-					tx->set_line(i, line_text);
-				}
-			} else {
-				int begin = tx->cursor_get_line();
-				String line_text = tx->get_line(begin);
-
-				if (line_text.begins_with("//"))
-					line_text = line_text.substr(2, line_text.length());
-				else
-					line_text = "//" + line_text;
-				tx->set_line(begin, line_text);
-			}
-			tx->end_complex_operation();
-			tx->update();
-			//tx->deselect();
+			shader_editor->toggle_inline_comment("//");
 
 		} break;
 		case EDIT_COMPLETE: {
@@ -345,6 +305,22 @@ void ShaderEditor::_menu_option(int p_option) {
 		case SEARCH_GOTO_LINE: {
 
 			goto_line_dialog->popup_find_line(shader_editor->get_text_edit());
+		} break;
+		case BOOKMARK_TOGGLE: {
+
+			shader_editor->toggle_bookmark();
+		} break;
+		case BOOKMARK_GOTO_NEXT: {
+
+			shader_editor->goto_next_bookmark();
+		} break;
+		case BOOKMARK_GOTO_PREV: {
+
+			shader_editor->goto_prev_bookmark();
+		} break;
+		case BOOKMARK_REMOVE_ALL: {
+
+			shader_editor->remove_all_bookmarks();
 		} break;
 	}
 	if (p_option != SEARCH_FIND && p_option != SEARCH_REPLACE && p_option != SEARCH_GOTO_LINE) {
@@ -576,6 +552,16 @@ ShaderEditor::ShaderEditor(EditorNode *p_node) {
 	search_menu->get_popup()->add_separator();
 	search_menu->get_popup()->add_shortcut(ED_GET_SHORTCUT("script_text_editor/goto_line"), SEARCH_GOTO_LINE);
 	search_menu->get_popup()->connect("id_pressed", this, "_menu_option");
+
+	PopupMenu *bookmarks = memnew(PopupMenu);
+	bookmarks->set_name("bookmarks");
+	edit_menu->get_popup()->add_child(bookmarks);
+	edit_menu->get_popup()->add_submenu_item(TTR("Bookmarks"), "bookmarks");
+	bookmarks->add_shortcut(ED_GET_SHORTCUT("script_text_editor/toggle_bookmark"), BOOKMARK_TOGGLE);
+	bookmarks->add_shortcut(ED_GET_SHORTCUT("script_text_editor/remove_all_bookmarks"), BOOKMARK_REMOVE_ALL);
+	bookmarks->add_shortcut(ED_GET_SHORTCUT("script_text_editor/goto_next_bookmark"), BOOKMARK_GOTO_NEXT);
+	bookmarks->add_shortcut(ED_GET_SHORTCUT("script_text_editor/goto_previous_bookmark"), BOOKMARK_GOTO_PREV);
+	bookmarks->connect("id_pressed", this, "_edit_option");
 
 	add_child(main_container);
 	main_container->add_child(hbc);

@@ -45,6 +45,8 @@
 	@author Juan Linietsky <reduzio@gmail.com>
 */
 
+class Mutex;
+
 class OS {
 
 	static OS *singleton;
@@ -260,7 +262,7 @@ public:
 	virtual int get_low_processor_usage_mode_sleep_usec() const;
 
 	virtual String get_executable_path() const;
-	virtual Error execute(const String &p_path, const List<String> &p_arguments, bool p_blocking, ProcessID *r_child_id = NULL, String *r_pipe = NULL, int *r_exitcode = NULL, bool read_stderr = false) = 0;
+	virtual Error execute(const String &p_path, const List<String> &p_arguments, bool p_blocking, ProcessID *r_child_id = NULL, String *r_pipe = NULL, int *r_exitcode = NULL, bool read_stderr = false, Mutex *p_pipe_mutex = NULL) = 0;
 	virtual Error kill(const ProcessID &p_pid) = 0;
 	virtual int get_process_id() const;
 
@@ -271,7 +273,7 @@ public:
 	virtual String get_environment(const String &p_var) const = 0;
 	virtual bool set_environment(const String &p_var, const String &p_value) const = 0;
 
-	virtual String get_name() = 0;
+	virtual String get_name() const = 0;
 	virtual List<String> get_cmdline_args() const { return _cmdline; }
 	virtual String get_model_name() const;
 
@@ -377,8 +379,9 @@ public:
 	// returns height of the currently shown virtual keyboard (0 if keyboard is hidden)
 	virtual int get_virtual_keyboard_height() const;
 
-	virtual void set_cursor_shape(CursorShape p_shape) = 0;
-	virtual void set_custom_mouse_cursor(const RES &p_cursor, CursorShape p_shape, const Vector2 &p_hotspot) = 0;
+	virtual void set_cursor_shape(CursorShape p_shape);
+	virtual CursorShape get_cursor_shape() const;
+	virtual void set_custom_mouse_cursor(const RES &p_cursor, CursorShape p_shape, const Vector2 &p_hotspot);
 
 	virtual bool get_swap_ok_cancel() { return false; }
 	virtual void dump_memory_to_file(const char *p_file);
@@ -448,6 +451,7 @@ public:
 	virtual void make_rendering_thread();
 	virtual void swap_buffers();
 
+	virtual void set_native_icon(const String &p_filename);
 	virtual void set_icon(const Ref<Image> &p_icon);
 
 	virtual int get_exit_code() const;

@@ -86,7 +86,9 @@ void FileDialog::_unhandled_input(const Ref<InputEvent> &p_event) {
 
 					_dir_entered("..");
 				} break;
-				default: { handled = false; }
+				default: {
+					handled = false;
+				}
 			}
 
 			if (handled)
@@ -429,8 +431,6 @@ void FileDialog::update_file_list() {
 		dirs.pop_front();
 	}
 
-	dirs.clear();
-
 	List<String> patterns;
 	// build filter
 	if (filter->get_selected() == filter->get_item_count() - 1) {
@@ -505,8 +505,6 @@ void FileDialog::update_file_list() {
 
 	if (tree->get_root() && tree->get_root()->get_children() && tree->get_selected() == NULL)
 		tree->get_root()->get_children()->select(0);
-
-	files.clear();
 }
 
 void FileDialog::_filter_selected(int) {

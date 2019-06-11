@@ -5,14 +5,15 @@
 # Daniel <lorddaniel09@gmail.com>, 2018.
 # Ben Golan <golanben4@gmail.com>, 2017.
 # Luc Stepniewski <lior@gradstein.info>, 2017.
-# Yaron Shahrabani <sh.yaron@gmail.com>, 2018.
+# Yaron Shahrabani <sh.yaron@gmail.com>, 2018, 2019.
 # RaikaRakka <shaiyatta@gmail.com>, 2018.
+# Ido Dana <idodana01@gmail.com>, 2019.
 msgid ""
 msgstr ""
 "Project-Id-Version: Godot Engine editor\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2018-12-13 14:40+0100\n"
-"Last-Translator: RaikaRakka <shaiyatta@gmail.com>\n"
+"PO-Revision-Date: 2019-03-28 09:36+0000\n"
+"Last-Translator: Yaron Shahrabani <sh.yaron@gmail.com>\n"
 "Language-Team: Hebrew <https://hosted.weblate.org/projects/godot-engine/"
 "godot/he/>\n"
 "Language: he\n"
@@ -21,7 +22,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=4; plural=(n == 1) ? 0 : ((n == 2) ? 1 : ((n > 10 && "
 "n % 10 == 0) ? 2 : 3));\n"
-"X-Generator: Poedit 2.2\n"
+"X-Generator: Weblate 3.6-dev\n"
 
 #: core/math/expression.cpp modules/gdscript/gdscript_functions.cpp
 #: modules/visual_script/visual_script_builtin_funcs.cpp
@@ -36,7 +37,7 @@ msgstr ""
 
 #: core/math/expression.cpp
 msgid "Invalid input %i (not passed) in expression"
-msgstr ""
+msgstr "קלט שגוי %I (לא הועבר) בתוך הביטוי"
 
 #: core/math/expression.cpp
 msgid "self can't be used because instance is null (not passed)"
@@ -47,9 +48,8 @@ msgid "Invalid operands to operator %s, %s and %s."
 msgstr ""
 
 #: core/math/expression.cpp
-#, fuzzy
 msgid "Invalid index of type %s for base type %s"
-msgstr "שם מאפיין האינדקס שגוי."
+msgstr "שם מאפיין האינדקס מסוג %s עבור בסיס %s שגוי"
 
 #: core/math/expression.cpp
 msgid "Invalid named index '%s' for base type %s"
@@ -66,8 +66,9 @@ msgstr ""
 
 #: editor/animation_bezier_editor.cpp
 #: editor/plugins/asset_library_editor_plugin.cpp
+#, fuzzy
 msgid "Free"
-msgstr ""
+msgstr "חינם"
 
 #: editor/animation_bezier_editor.cpp
 msgid "Balanced"
@@ -79,21 +80,19 @@ msgstr ""
 
 #: editor/animation_bezier_editor.cpp
 msgid "Insert Key Here"
-msgstr ""
+msgstr "הכנס מפתח כאן"
 
 #: editor/animation_bezier_editor.cpp
-#, fuzzy
 msgid "Duplicate Selected Key(s)"
-msgstr "למחוק את הקבצים הנבחרים?"
+msgstr "לשכפל את הקבצים הנבחרים"
 
 #: editor/animation_bezier_editor.cpp
-#, fuzzy
 msgid "Delete Selected Key(s)"
-msgstr "למחוק את הקבצים הנבחרים?"
+msgstr "למחוק את הקבצים הנבחרים"
 
 #: editor/animation_bezier_editor.cpp
 msgid "Add Bezier Point"
-msgstr ""
+msgstr "הוסף נקודה"
 
 #: editor/animation_bezier_editor.cpp
 #, fuzzy
@@ -121,22 +120,23 @@ msgid "Anim Change Transform"
 msgstr "שינוי מיקום אנימציה"
 
 #: editor/animation_track_editor.cpp
+#, fuzzy
 msgid "Anim Change Keyframe Value"
-msgstr "שינוי ערך פריים-מפתח אנימציה"
+msgstr "שינוי ערך קיפריים אנימציה"
 
 #: editor/animation_track_editor.cpp
 msgid "Anim Change Call"
 msgstr ""
 
 #: editor/animation_track_editor.cpp
-#, fuzzy
 msgid "Change Animation Length"
-msgstr "החלפת ערך מילון"
+msgstr "החלפת ערך אנימציה"
 
 #: editor/animation_track_editor.cpp
 #: editor/plugins/sprite_frames_editor_plugin.cpp
+#, fuzzy
 msgid "Change Animation Loop"
-msgstr ""
+msgstr "שינוי לופ אנימציה"
 
 #: editor/animation_track_editor.cpp
 msgid "Property Track"
@@ -166,23 +166,27 @@ msgstr "שקופיות ההנפשה"
 
 #: editor/animation_track_editor.cpp
 #, fuzzy
+msgid "Animation length (frames)"
+msgstr "משך ההנפשה (בשניות)"
+
+#: editor/animation_track_editor.cpp
+#, fuzzy
+msgid "Animation length (seconds)"
+msgstr "משך ההנפשה (בשניות)"
+
+#: editor/animation_track_editor.cpp
+#, fuzzy
 msgid "Add Track"
 msgstr "הוספת רצועות חדשות."
 
 #: editor/animation_track_editor.cpp
-#, fuzzy
-msgid "Animation Length Time (seconds)"
-msgstr "משך ההנפשה (בשניות)."
-
-#: editor/animation_track_editor.cpp
-#, fuzzy
 msgid "Animation Looping"
-msgstr "תקריב הנפשה."
+msgstr "תקריב הנפשה"
 
 #: editor/animation_track_editor.cpp
 #: modules/visual_script/visual_script_editor.cpp
 msgid "Functions:"
-msgstr ""
+msgstr "פונקציות:"
 
 #: editor/animation_track_editor.cpp
 #, fuzzy
@@ -196,15 +200,17 @@ msgstr ""
 #: editor/animation_track_editor.cpp
 #, fuzzy
 msgid "Change Track Path"
-msgstr "החלפת ערך המערך"
+msgstr "החלפת ערך רצועה"
 
 #: editor/animation_track_editor.cpp
+#, fuzzy
 msgid "Toggle this track on/off."
-msgstr ""
+msgstr "הפעל/כבה רצועה"
 
 #: editor/animation_track_editor.cpp
+#, fuzzy
 msgid "Update Mode (How this property is set)"
-msgstr ""
+msgstr "עדכן מצב (איך המאפיין הזה נקבע)"
 
 #: editor/animation_track_editor.cpp
 msgid "Interpolation Mode"
@@ -215,14 +221,12 @@ msgid "Loop Wrap Mode (Interpolate end with beginning on loop)"
 msgstr ""
 
 #: editor/animation_track_editor.cpp
-#, fuzzy
 msgid "Remove this track."
-msgstr "הסרת נקודה בנתיב"
+msgstr "הסרת רצועה."
 
 #: editor/animation_track_editor.cpp
-#, fuzzy
 msgid "Time (s): "
-msgstr "זמן:"
+msgstr "זמן: "
 
 #: editor/animation_track_editor.cpp
 msgid "Toggle Track Enabled"
@@ -250,8 +254,9 @@ msgstr ""
 
 #: editor/animation_track_editor.cpp editor/plugins/curve_editor_plugin.cpp
 #: editor/property_editor.cpp
+#, fuzzy
 msgid "Linear"
-msgstr ""
+msgstr "ליניארי"
 
 #: editor/animation_track_editor.cpp
 msgid "Cubic"
@@ -268,12 +273,11 @@ msgstr ""
 #: editor/animation_track_editor.cpp
 #: editor/plugins/canvas_item_editor_plugin.cpp
 msgid "Insert Key"
-msgstr ""
+msgstr "הכנס מפתח"
 
 #: editor/animation_track_editor.cpp
-#, fuzzy
 msgid "Duplicate Key(s)"
-msgstr "שכפול"
+msgstr "שכפול מפתח"
 
 #: editor/animation_track_editor.cpp
 #, fuzzy
@@ -296,12 +300,14 @@ msgid "Change Animation Loop Mode"
 msgstr "שם הנפשה חדשה:"
 
 #: editor/animation_track_editor.cpp
+#, fuzzy
 msgid "Remove Anim Track"
-msgstr ""
+msgstr "מחק רצועת הנפשה"
 
 #: editor/animation_track_editor.cpp
+#, fuzzy
 msgid "Create NEW track for %s and insert key?"
-msgstr ""
+msgstr "ליצור רצועה חדשה ל%s ולהכניס מפתח?"
 
 #: editor/animation_track_editor.cpp
 msgid "Create %d NEW tracks and insert keys?"
@@ -325,8 +331,9 @@ msgid "AnimationPlayer can't animate itself, only other players."
 msgstr ""
 
 #: editor/animation_track_editor.cpp
+#, fuzzy
 msgid "Anim Create & Insert"
-msgstr ""
+msgstr "יצירת הנפשה"
 
 #: editor/animation_track_editor.cpp
 msgid "Anim Insert Track & Key"
@@ -344,7 +351,7 @@ msgstr "ניקוי ההנפשה"
 #: editor/animation_track_editor.cpp
 #, fuzzy
 msgid "Rearrange Tracks"
-msgstr "סידור טעינות אוטומטית מחדש"
+msgstr "סידור רצועות"
 
 #: editor/animation_track_editor.cpp
 msgid "Transform tracks only apply to Spatial-based nodes."
@@ -373,7 +380,7 @@ msgstr ""
 #: editor/animation_track_editor.cpp
 #, fuzzy
 msgid "Add Bezier Track"
-msgstr "הוספת רצועות חדשות."
+msgstr "הוספת רצועת בזייה"
 
 #: editor/animation_track_editor.cpp
 msgid "Track path is invalid, so can't add a key."
@@ -440,13 +447,21 @@ msgstr ""
 
 #: editor/animation_track_editor.cpp
 #, fuzzy
-msgid "Snap (s): "
-msgstr "צעד/ים:"
+msgid "Snap:"
+msgstr "הצמדה"
 
 #: editor/animation_track_editor.cpp
 #, fuzzy
 msgid "Animation step value."
 msgstr "שקופיות ההנפשה"
+
+#: editor/animation_track_editor.cpp
+msgid "Seconds"
+msgstr ""
+
+#: editor/animation_track_editor.cpp
+msgid "FPS"
+msgstr ""
 
 #: editor/animation_track_editor.cpp editor/editor_properties.cpp
 #: editor/plugins/polygon_2d_editor_plugin.cpp
@@ -3822,6 +3837,11 @@ msgid "Delete Node"
 msgstr "מחיקת שורה"
 
 #: editor/plugins/animation_blend_tree_editor_plugin.cpp
+#: editor/scene_tree_dock.cpp
+msgid "Delete Node(s)"
+msgstr ""
+
+#: editor/plugins/animation_blend_tree_editor_plugin.cpp
 #, fuzzy
 msgid "Toggle Filter On/Off"
 msgstr "החלפת מצב מועדפים"
@@ -4804,8 +4824,33 @@ msgid "Layout"
 msgstr ""
 
 #: editor/plugins/canvas_item_editor_plugin.cpp
-msgid "Insert keys."
+msgid "Translation mask for inserting keys."
 msgstr ""
+
+#: editor/plugins/canvas_item_editor_plugin.cpp
+msgid "Rotation mask for inserting keys."
+msgstr ""
+
+#: editor/plugins/canvas_item_editor_plugin.cpp
+msgid "Scale mask for inserting keys."
+msgstr ""
+
+#: editor/plugins/canvas_item_editor_plugin.cpp
+msgid "Insert keys (based on mask)."
+msgstr ""
+
+#: editor/plugins/canvas_item_editor_plugin.cpp
+msgid ""
+"Auto insert keys when objects are translated, rotated on scaled (based on "
+"mask).\n"
+"Keys are only added to existing tracks, no new tracks will be created.\n"
+"Keys must be inserted manually for the first time."
+msgstr ""
+
+#: editor/plugins/canvas_item_editor_plugin.cpp
+#, fuzzy
+msgid "Auto Insert Key"
+msgstr "הכנס מפתח"
 
 #: editor/plugins/canvas_item_editor_plugin.cpp
 msgid "Insert Key (Existing Tracks)"
@@ -4874,6 +4919,52 @@ msgstr "עריכת מצולע (הסרת נקודה)"
 
 #: editor/plugins/collision_shape_2d_editor_plugin.cpp
 msgid "Set Handle"
+msgstr ""
+
+#: editor/plugins/cpu_particles_2d_editor_plugin.cpp
+#: editor/plugins/particles_2d_editor_plugin.cpp
+msgid "Error loading image:"
+msgstr ""
+
+#: editor/plugins/cpu_particles_2d_editor_plugin.cpp
+#: editor/plugins/particles_2d_editor_plugin.cpp
+msgid "No pixels with transparency > 128 in image..."
+msgstr ""
+
+#: editor/plugins/cpu_particles_2d_editor_plugin.cpp
+#: editor/plugins/particles_2d_editor_plugin.cpp
+msgid "Load Emission Mask"
+msgstr ""
+
+#: editor/plugins/cpu_particles_2d_editor_plugin.cpp
+#: editor/plugins/particles_2d_editor_plugin.cpp
+msgid "Clear Emission Mask"
+msgstr ""
+
+#: editor/plugins/cpu_particles_2d_editor_plugin.cpp
+#: editor/plugins/particles_2d_editor_plugin.cpp
+#: editor/plugins/particles_editor_plugin.cpp
+msgid "Particles"
+msgstr ""
+
+#: editor/plugins/cpu_particles_2d_editor_plugin.cpp
+#: editor/plugins/particles_2d_editor_plugin.cpp
+msgid "Generated Point Count:"
+msgstr ""
+
+#: editor/plugins/cpu_particles_2d_editor_plugin.cpp
+#: editor/plugins/particles_2d_editor_plugin.cpp
+msgid "Emission Mask"
+msgstr ""
+
+#: editor/plugins/cpu_particles_2d_editor_plugin.cpp
+#: editor/plugins/particles_2d_editor_plugin.cpp
+msgid "Capture from Pixel"
+msgstr ""
+
+#: editor/plugins/cpu_particles_2d_editor_plugin.cpp
+#: editor/plugins/particles_2d_editor_plugin.cpp
+msgid "Emission Colors"
 msgstr ""
 
 #: editor/plugins/cpu_particles_editor_plugin.cpp
@@ -5228,22 +5319,6 @@ msgid "Can only set point into a ParticlesMaterial process material"
 msgstr ""
 
 #: editor/plugins/particles_2d_editor_plugin.cpp
-msgid "Error loading image:"
-msgstr ""
-
-#: editor/plugins/particles_2d_editor_plugin.cpp
-msgid "No pixels with transparency > 128 in image..."
-msgstr ""
-
-#: editor/plugins/particles_2d_editor_plugin.cpp
-msgid "Load Emission Mask"
-msgstr ""
-
-#: editor/plugins/particles_2d_editor_plugin.cpp
-msgid "Clear Emission Mask"
-msgstr ""
-
-#: editor/plugins/particles_2d_editor_plugin.cpp
 #: editor/plugins/particles_editor_plugin.cpp
 #, fuzzy
 msgid "Convert to CPUParticles"
@@ -5251,28 +5326,7 @@ msgstr "המרה לאותיות גדולות"
 
 #: editor/plugins/particles_2d_editor_plugin.cpp
 #: editor/plugins/particles_editor_plugin.cpp
-msgid "Particles"
-msgstr ""
-
-#: editor/plugins/particles_2d_editor_plugin.cpp
-msgid "Generated Point Count:"
-msgstr ""
-
-#: editor/plugins/particles_2d_editor_plugin.cpp
-#: editor/plugins/particles_editor_plugin.cpp
 msgid "Generation Time (sec):"
-msgstr ""
-
-#: editor/plugins/particles_2d_editor_plugin.cpp
-msgid "Emission Mask"
-msgstr ""
-
-#: editor/plugins/particles_2d_editor_plugin.cpp
-msgid "Capture from Pixel"
-msgstr ""
-
-#: editor/plugins/particles_2d_editor_plugin.cpp
-msgid "Emission Colors"
 msgstr ""
 
 #: editor/plugins/particles_editor_plugin.cpp
@@ -5802,7 +5856,7 @@ msgid "Save Theme As..."
 msgstr "שמירת ערכת עיצוב בשם…"
 
 #: editor/plugins/script_editor_plugin.cpp
-msgid " Class Reference"
+msgid "%s Class Reference"
 msgstr ""
 
 #: editor/plugins/script_editor_plugin.cpp
@@ -5935,6 +5989,14 @@ msgstr "ניפוי שגיאות עם עורך חיצוני"
 #: editor/plugins/script_editor_plugin.cpp
 msgid "Open Godot online documentation"
 msgstr "פתיחת התיעוד המקוון של Godot"
+
+#: editor/plugins/script_editor_plugin.cpp
+msgid "Request Docs"
+msgstr ""
+
+#: editor/plugins/script_editor_plugin.cpp
+msgid "Help improve the Godot documentation by giving feedback"
+msgstr ""
 
 #: editor/plugins/script_editor_plugin.cpp
 msgid "Search the reference documentation."
@@ -6639,6 +6701,26 @@ msgid "Nameless gizmo"
 msgstr ""
 
 #: editor/plugins/sprite_editor_plugin.cpp
+#, fuzzy
+msgid "Create Mesh2D"
+msgstr "יצירת %s חדש"
+
+#: editor/plugins/sprite_editor_plugin.cpp
+#, fuzzy
+msgid "Create Polygon2D"
+msgstr "יצירת מצולע"
+
+#: editor/plugins/sprite_editor_plugin.cpp
+#, fuzzy
+msgid "Create CollisionPolygon2D"
+msgstr "יצירת מצולע"
+
+#: editor/plugins/sprite_editor_plugin.cpp
+#, fuzzy
+msgid "Create LightOccluder2D"
+msgstr "יצירת תיקייה"
+
+#: editor/plugins/sprite_editor_plugin.cpp
 msgid "Sprite is empty!"
 msgstr ""
 
@@ -6651,18 +6733,39 @@ msgid "Invalid geometry, can't replace by mesh."
 msgstr ""
 
 #: editor/plugins/sprite_editor_plugin.cpp
+msgid "Invalid geometry, can't create polygon."
+msgstr ""
+
+#: editor/plugins/sprite_editor_plugin.cpp
+msgid "Invalid geometry, can't create collision polygon."
+msgstr ""
+
+#: editor/plugins/sprite_editor_plugin.cpp
+msgid "Invalid geometry, can't create light occluder."
+msgstr ""
+
+#: editor/plugins/sprite_editor_plugin.cpp
 msgid "Sprite"
 msgstr ""
 
 #: editor/plugins/sprite_editor_plugin.cpp
 #, fuzzy
-msgid "Convert to 2D Mesh"
+msgid "Convert to Mesh2D"
 msgstr "המרה לאותיות גדולות"
 
 #: editor/plugins/sprite_editor_plugin.cpp
 #, fuzzy
-msgid "Create 2D Mesh"
-msgstr "יצירת %s חדש"
+msgid "Convert to Polygon2D"
+msgstr "הזזת מצולע"
+
+#: editor/plugins/sprite_editor_plugin.cpp
+#, fuzzy
+msgid "Create CollisionPolygon2D Sibling"
+msgstr "יצירת מצולע"
+
+#: editor/plugins/sprite_editor_plugin.cpp
+msgid "Create LightOccluder2D Sibling"
+msgstr ""
 
 #: editor/plugins/sprite_editor_plugin.cpp
 msgid "Simplification: "
@@ -7269,6 +7372,11 @@ msgstr ""
 #, fuzzy
 msgid "Duplicate Nodes"
 msgstr "שכפול"
+
+#: editor/plugins/visual_shader_editor_plugin.cpp
+#, fuzzy
+msgid "Delete Nodes"
+msgstr "מחיקת שורה"
 
 #: editor/plugins/visual_shader_editor_plugin.cpp
 msgid "Visual Shader Input Type Changed"
@@ -8454,10 +8562,6 @@ msgstr ""
 #, fuzzy
 msgid "Open documentation"
 msgstr "פתיחת התיעוד המקוון של Godot"
-
-#: editor/scene_tree_dock.cpp
-msgid "Delete Node(s)"
-msgstr ""
 
 #: editor/scene_tree_dock.cpp
 msgid "Add Child Node"
@@ -10210,6 +10314,10 @@ msgstr ""
 #: servers/visual/shader_language.cpp
 msgid "Varyings can only be assigned in vertex function."
 msgstr ""
+
+#, fuzzy
+#~ msgid "Snap (s): "
+#~ msgstr "צעד/ים:"
 
 #, fuzzy
 #~ msgid "Warnings:"

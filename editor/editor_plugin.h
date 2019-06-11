@@ -95,10 +95,12 @@ public:
 	void set_plugin_enabled(const String &p_plugin, bool p_enabled);
 	bool is_plugin_enabled(const String &p_plugin) const;
 
+	EditorInspector *get_inspector() const;
+
 	Error save_scene();
 	void save_scene_as(const String &p_scene, bool p_with_preview = true);
 
-	Vector<Ref<Texture> > make_mesh_previews(const Vector<Ref<Mesh> > &p_meshes, int p_preview_size);
+	Vector<Ref<Texture> > make_mesh_previews(const Vector<Ref<Mesh> > &p_meshes, Vector<Transform> *p_trnasforms, int p_preview_size);
 
 	EditorInterface();
 };
@@ -135,7 +137,9 @@ public:
 		CONTAINER_CANVAS_EDITOR_SIDE_LEFT,
 		CONTAINER_CANVAS_EDITOR_SIDE_RIGHT,
 		CONTAINER_CANVAS_EDITOR_BOTTOM,
-		CONTAINER_PROPERTY_EDITOR_BOTTOM
+		CONTAINER_PROPERTY_EDITOR_BOTTOM,
+		CONTAINER_PROJECT_SETTING_TAB_LEFT,
+		CONTAINER_PROJECT_SETTING_TAB_RIGHT,
 	};
 
 	enum DockSlot {
