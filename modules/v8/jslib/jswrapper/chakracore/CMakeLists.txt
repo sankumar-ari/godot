@@ -1,0 +1,46 @@
+cmake_minimum_required(VERSION 3.0)
+
+
+set(JSWrapper_CHAKRA_SRC
+"${CMAKE_CURRENT_LIST_DIR}/Utils.hpp"
+"${CMAKE_CURRENT_LIST_DIR}/Base.h"
+"${CMAKE_CURRENT_LIST_DIR}/Class.cpp"
+"${CMAKE_CURRENT_LIST_DIR}/Class.hpp"
+"${CMAKE_CURRENT_LIST_DIR}/HelperMacros.h"
+"${CMAKE_CURRENT_LIST_DIR}/Object.cpp"
+"${CMAKE_CURRENT_LIST_DIR}/Object.hpp"
+"${CMAKE_CURRENT_LIST_DIR}/ScriptEngine.cpp"
+"${CMAKE_CURRENT_LIST_DIR}/ScriptEngine.hpp"
+"${CMAKE_CURRENT_LIST_DIR}/SeApi.h"
+"${CMAKE_CURRENT_LIST_DIR}/Utils.cpp"
+)
+
+set(JWRAPPER_SOURCES ${JWRAPPER_SOURCES} 
+	${JSWrapper_CHAKRA_SRC}
+	PARENT_SCOPE
+) 
+
+
+set(CHAKRA_ROOT "${JWRAPPER_ROOT}/thirdparty/chakra/")
+set(LIBUV_ROOT "${JWRAPPER_ROOT}/thirdparty/libuv/")
+set(ZLIB_ROOT "${JWRAPPER_ROOT}/thirdparty/zlib/")
+
+set(JWRAPPER_TARGET_DEFINITIONS ${JWRAPPER_TARGET_DEFINITIONS}
+	 SCRIPT_ENGINE_TYPE=4
+	PARENT_SCOPE
+)
+set(JWRAPPER_TARGET_INCLUDES ${JWRAPPER_TARGET_INCLUDES} 
+	"${CHAKRA_ROOT}/include" "${LIBUV_ROOT}/include" "${ZLIB_ROOT}/include/zlib" "${JWRAPPER_ROOT}/thirdparty/utf8"
+	PARENT_SCOPE
+)
+set(JWRAPPER_TARGET_LIBRARIES ${JWRAPPER_TARGET_LIBRARIES} 
+	debug "${CHAKRA_ROOT}/lib/x64/debug/ChakraCore.lib" optimized "${CHAKRA_ROOT}/lib/x64/release/ChakraCore.lib"
+	Ws2_32 psapi iphlpapi userenv 
+	PARENT_SCOPE
+)
+
+set(JWRAPPER_TARGET_COMMANDS ${JWRAPPER_TARGET_COMMANDS}
+	COMMAND ${CMAKE_COMMAND} -E copy_if_different "${CHAKRA_ROOT}/lib/x64/${CMAKE_CFG_INTDIR}/ChakraCore.dll" $<TARGET_FILE_DIR:${JWRAPPER_TARGET}>
+	COMMAND ${CMAKE_COMMAND} -E copy_if_different "${CHAKRA_ROOT}/lib/x64/${CMAKE_CFG_INTDIR}/ChakraCore.pdb" $<TARGET_FILE_DIR:${JWRAPPER_TARGET}>
+	PARENT_SCOPE
+)

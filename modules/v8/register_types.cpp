@@ -33,21 +33,22 @@
 #include "core/io/resource_saver.h"
 #include "core/script_language.h"
 #include "js_language.h"
-
-JavaScriptLanguage *js_v8_language = NULL;
-ResourceFormatLoaderJavaScript *js_resource_loader = NULL;
-ResourceFormatSaverJavaScript *js_resource_saver = NULL;
+#include "js_script.h"
+#include "js_resource_format.h"
+JSLanguage *js_v8_language = NULL;
+ResourceFormatLoaderJS *js_resource_loader = NULL;
+ResourceFormatSaverJS *js_resource_saver = NULL;
 
 void register_v8_types() {
 
-	ClassDB::register_class<V8JavaScript>();
+	ClassDB::register_class<JS_Script>();
 
-	js_v8_language = memnew(JavaScriptLanguage);
+	js_v8_language = memnew(JSLanguage);
 	ScriptServer::register_language(js_v8_language);
 
-	js_resource_loader = memnew(ResourceFormatLoaderJavaScript);
+	js_resource_loader = memnew(ResourceFormatLoaderJS);
 	ResourceLoader::add_resource_format_loader(js_resource_loader);
-	js_resource_saver = memnew(ResourceFormatSaverJavaScript);
+	js_resource_saver = memnew(ResourceFormatSaverJS);
 	ResourceSaver::add_resource_format_saver(js_resource_saver);
 }
 

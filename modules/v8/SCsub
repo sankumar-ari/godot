@@ -3,9 +3,7 @@
 import glob
 Import('env')
 
-source_files = glob.glob("*.cpp") + ["debugger/inspector_io.cc", "debugger/inspector_socket.cc",
-                                     "debugger/inspector_socket_server.cc", "debugger/http_parser.cc", "debugger/inspector_agent.cc"] 
-                                     #+ glob.glob("./jswrapper/*.cpp") + glob.glob("./jswrapper/v8/*.cpp")+ glob.glob("./jswrapper/v8/debugger/*.cc")
+source_files = glob.glob("*.cpp") + glob.glob("./jslib/jswrapper/*.cpp") + glob.glob("./jslib/jswrapper/v8/*.cpp")+ glob.glob("./jslib/jswrapper/v8/debugger/*.cc")+ glob.glob("./jslib/jswrapper/v8/debugger/*.cpp")
 env.add_source_files(env.modules_sources, source_files)
 
 libs = [
@@ -17,22 +15,22 @@ libs = [
     "Userenv"
 ]
 
-env.make_js_header("js/global.js")
+#env.make_js_header("js/global.js")
 
-env.Append(CPPPATH=["#modules/v8/thirdparty/v8/include",
-                    "#modules/v8/thirdparty/libuv/include", "#modules/v8/debugger"])
-env.Append(LIBPATH=["#modules/v8/thirdparty/v8/lib/Release/",
-                    "#modules/v8/thirdparty/libuv/x64_Release_StaticLibrary_MT"])
+env.Append(CPPPATH=["#modules/v8/jslib/thirdparty/v8/include",
+                    "#modules/v8/jslib/thirdparty/libuv/include", "#modules/v8/debugger"])
+env.Append(LIBPATH=["#modules/v8/jslib/thirdparty/v8/lib/Release/",
+                    "#modules/v8/jslib/thirdparty/libuv/x64_Release_StaticLibrary_MT"])
 env.Append(LINKFLAGS=[l+".lib" for l in libs])
 env.Install("#bin", [
-    "#modules/v8/thirdparty/v8/lib/Release/snapshot_blob.bin",
-    "#modules/v8/thirdparty/v8/lib/Release/v8.dll",
-    "#modules/v8/thirdparty/v8/lib/Release/v8_libbase.dll",
-    "#modules/v8/thirdparty/v8/lib/Release/v8_libbase.dll.lib",
-    "#modules/v8/thirdparty/v8/lib/Release/v8_libplatform.dll",
-    "#modules/v8/thirdparty/v8/lib/Release/icudtl.dat",
-    "#modules/v8/thirdparty/v8/lib/Release/icui18n.dll",
-    "#modules/v8/thirdparty/v8/lib/Release/icuuc.dll",
-    "#modules/v8/thirdparty/v8/lib/Release/natives_blob.bin"
+    "#modules/v8/jslib/thirdparty/v8/lib/Release/snapshot_blob.bin",
+    "#modules/v8/jslib/thirdparty/v8/lib/Release/v8.dll",
+    "#modules/v8/jslib/thirdparty/v8/lib/Release/v8_libbase.dll",
+    "#modules/v8/jslib/thirdparty/v8/lib/Release/v8_libbase.dll.lib",
+    "#modules/v8/jslib/thirdparty/v8/lib/Release/v8_libplatform.dll",
+    "#modules/v8/jslib/thirdparty/v8/lib/Release/icudtl.dat",
+    "#modules/v8/jslib/thirdparty/v8/lib/Release/icui18n.dll",
+    "#modules/v8/jslib/thirdparty/v8/lib/Release/icuuc.dll",
+    "#modules/v8/jslib/thirdparty/v8/lib/Release/natives_blob.bin"
 ])
 Export('env')
