@@ -28,9 +28,9 @@ public:
 	virtual MultiplayerAPI::RPCMode get_rpc_mode(const StringName & p_method) const override;
 	virtual MultiplayerAPI::RPCMode get_rset_mode(const StringName & p_variable) const override;
 	virtual ScriptLanguage * get_language() override;
-	void initialize(se::Object* jsobj, Object* owner, Ref<JS_Script> script, JSLanguage* language);
+	void initialize(se::Value& jsobj, Object* owner, Ref<JS_Script> script, JSLanguage* language);
 private:
-	se::Object* _object;
+	se::Value _object;
 	Object* _owner;
 	Ref<JS_Script> _script;
 	JSLanguage* _language;

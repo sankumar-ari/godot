@@ -37,15 +37,67 @@ public:
 	virtual void get_script_property_list(List<PropertyInfo>* p_list) const override;
 	void initialize(JSLanguage* language);
 	Error load_source_code(const String &p_path);
-	void set_script_path(const String &p_path) { _path = p_path; } //because subclasses need a path too...
+	void set_script_path(const String &p_path) { path = p_path; } //because subclasses need a path too...
+
+	virtual int get_member_line(const StringName &p_member) const {
+#ifdef TOOLS_ENABLED
+		if (member_lines.has(p_member))
+			return member_lines[p_member];
+		else
+#endif
+			return -1;
+	}
+
+	virtual void get_constants(Map<StringName, Variant> *p_constants);
+	virtual void get_members(Set<StringName> *p_members);
+
+#ifdef TOOLS_ENABLED
+	virtual bool is_placeholder_fallback_enabled() const { return placeholder_fallback_enabled; }
+#endif
+
+	virtual void update_exports();
 private:
 	
+#ifdef TOOLS_ENABLED
+
+	Map<StringName, int> member_lines;
+
+	Map<StringName, Variant> member_default_values;
+
+	List<PropertyInfo> members_cache;
+	Map<StringName, Variant> member_default_values_cache;
+	Ref<JS_Script> base_cache;
+	Set<ObjectID> inheriters_cache;
+	bool source_changed_cache;
+	bool placeholder_fallback_enabled;
+	void _update_exports_values(Map<StringName, Variant> &values, List<PropertyInfo> &propnames);
+
+	Set<PlaceHolderScriptInstance *> placeholders;
+	//void _update_placeholder(PlaceHolderScriptInstance *p_placeholder);
+	virtual void _placeholder_erased(PlaceHolderScriptInstance *p_placeholder);
+
+#endif
+#ifdef DEBUG_ENABLED
+
+	Map<ObjectID, List<Pair<StringName, Variant> > > pending_reload_state;
+
+#endif
+
+	bool _update_exports();
+	
+	Set<StringName> members; //members are just indices to the instanced script.
+	Map<StringName, Variant> constants;
+	// Map<StringName, GDScriptFunction *> member_functions;
+	// Map<StringName, MemberInfo> member_indices; //members are just indices to the instanced script.
+	// Map<StringName, Ref<GDScript> > subclasses;
+	Map<StringName, Vector<StringName> > _signals;
+
 	bool tool;
 	bool valid;
-	String _source;
-	se::Object* _constructor;
+	String source;
+	se::Value _constructor;
 	JSLanguage* _language;
 	Set<const Object*> _instances;
-	String _path;
+	String path;
 };
 #endif

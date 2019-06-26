@@ -35,31 +35,39 @@
 #include "js_language.h"
 #include "js_script.h"
 #include "js_resource_format.h"
-JSLanguage *js_v8_language = NULL;
-ResourceFormatLoaderJS *js_resource_loader = NULL;
-ResourceFormatSaverJS *js_resource_saver = NULL;
+
+
+
+JSLanguage *script_language_js = NULL;
+Ref<ResourceFormatLoaderJS> resource_loader_js;
+Ref<ResourceFormatSaverJS> resource_saver_js;
+
 
 void register_v8_types() {
-
 	ClassDB::register_class<JS_Script>();
+		
+	script_language_js = memnew(JSLanguage);
+	//script_language_js->set_language_index(ScriptServer::get_language_count());
+	ScriptServer::register_language(script_language_js);
 
-	js_v8_language = memnew(JSLanguage);
-	ScriptServer::register_language(js_v8_language);
+	resource_loader_js.instance();
+	ResourceLoader::add_resource_format_loader(resource_loader_js);
 
-	js_resource_loader = memnew(ResourceFormatLoaderJS);
-	ResourceLoader::add_resource_format_loader(js_resource_loader);
-	js_resource_saver = memnew(ResourceFormatSaverJS);
-	ResourceSaver::add_resource_format_saver(js_resource_saver);
+	resource_saver_js.instance();
+	ResourceSaver::add_resource_format_saver(resource_saver_js);
 }
 
 void unregister_v8_types() {
+	ScriptServer::unregister_language(script_language_js);
 
-	ScriptServer::unregister_language(js_v8_language);
+	if (script_language_js)
+		memdelete(script_language_js);
 
-	if (js_v8_language)
-		memdelete(js_v8_language);
-	if (js_resource_loader)
-		memdelete(js_resource_loader);
-	if (js_resource_saver)
-		memdelete(js_resource_saver);
+	ResourceLoader::remove_resource_format_loader(resource_loader_js);
+	resource_loader_js.unref();
+
+	ResourceSaver::remove_resource_format_saver(resource_saver_js);
+	resource_saver_js.unref();
+
+
 }

@@ -1,6 +1,11 @@
 #include "js_resource_format.h"
 #include "js_script.h"
 #include "core/os/file_access.h"
+
+ResourceFormatLoaderJS::~ResourceFormatLoaderJS()
+{
+
+}
 RES ResourceFormatLoaderJS::load(const String &p_path, const String &p_original_path, Error *r_error) {
 
 	if (r_error)
@@ -55,6 +60,10 @@ void ResourceFormatLoaderJS::get_dependencies(const String &p_path, List<String>
 
 }
 
+ResourceFormatSaverJS::~ResourceFormatSaverJS()
+{
+
+}
 Error ResourceFormatSaverJS::save(const String &p_path, const RES &p_resource, uint32_t p_flags) {
 
 	Ref<JS_Script> sqscr = p_resource;

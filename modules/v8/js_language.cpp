@@ -1,12 +1,18 @@
 #include "js_language.h"
 #include "js_script.h"
 #include "jslib/jswrapper/SeApi.h"
+#include "js_engine_initializer.h"
 JSLanguage *JSLanguage::singleton = NULL;
 JSLanguage::JSLanguage()
 {
 	singleton = this;
-	se::ScriptEngine* se = se::ScriptEngine::getInstance();
-	se->
+	JSEngineInitializer::Initialize();
+}
+
+JSLanguage::~JSLanguage()
+{
+	JSEngineInitializer::Unload();
+	singleton = nullptr;
 }
 String JSLanguage::get_name() const
 {
@@ -19,7 +25,7 @@ void JSLanguage::init()
 
 String JSLanguage::get_type() const
 {
-	return "JSLanguage";
+	return "ECMAScript";
 }
 
 String JSLanguage::get_extension() const
@@ -38,11 +44,11 @@ void JSLanguage::finish()
 
 void JSLanguage::get_reserved_words(List<String>* p_words) const
 {
-	static const char *_reserved_words[] = { "abstract", "arguments", "await*", "boolean", "break", "byte", "case", "catch", 
-		"char", "class*", "const", "continue", "debugger", "default", "delete", "do", "double", "else", "enum*", "eval", 
-		"export*", "extends*", "false", "final", "finally", "float", "for", "function", "goto", "if", "implements", 
-		"import*", "in", "instanceof", "int", "interface", "let*", "long", "native", "new", "null", "package", "private", 
-		"protected", "public", "return", "short", "static", "super*", "switch", "synchronized", "this", "throw", "throws", 
+	static const char *_reserved_words[] = { "abstract", "arguments", "await", "boolean", "break", "byte", "case", "catch", 
+		"char", "class", "const", "continue", "debugger", "default", "delete", "do", "double", "else", "enum", "eval", 
+		"export", "extends", "false", "final", "finally", "float", "for", "function", "goto", "if", "implements", 
+		"import", "in", "instanceof", "int", "interface", "let", "long", "native", "new", "null", "package", "private", 
+		"protected", "public", "return", "short", "static", "super", "switch", "synchronized", "this", "throw", "throws", 
 		"transient", "true", "try", "typeof", "var", "void", "volatile", "while", "with", "yield", 0 };
 	
 	const char **w = _reserved_words;
@@ -89,7 +95,7 @@ Ref<Script> JSLanguage::get_template(const String & p_class_name, const String &
 " }\n"
 "\n"
 "}\n"
-"exports = User";
+"exports = %CLASS%";
 	String base_class_name = get_base_class_name(p_base_class_name, p_class_name);
 	script_template = script_template.replace("%BASE%", base_class_name)
 							  .replace("%CLASS%", p_class_name);
@@ -118,7 +124,7 @@ Script * JSLanguage::create_script() const
 
 bool JSLanguage::has_named_classes() const
 {
-	return false;
+	return true;
 }
 
 bool JSLanguage::supports_builtin_mode() const
@@ -201,6 +207,7 @@ String JSLanguage::debug_parse_stack_level_expression(int p_level, const String 
 
 void JSLanguage::reload_all_scripts()
 {
+
 }
 
 void JSLanguage::reload_tool_script(const Ref<Script>& p_script, bool p_soft_reload)
@@ -209,6 +216,7 @@ void JSLanguage::reload_tool_script(const Ref<Script>& p_script, bool p_soft_rel
 
 void JSLanguage::get_recognized_extensions(List<String>* p_extensions) const
 {
+	p_extensions->push_back(get_extension());
 }
 
 void JSLanguage::get_public_functions(List<MethodInfo>* p_functions) const

@@ -13,6 +13,7 @@ class JSLanguage : public ScriptLanguage
 public:
 
 	JSLanguage();
+	virtual ~JSLanguage();
 	// Inherited via ScriptLanguage
 	virtual String get_name() const override;
 

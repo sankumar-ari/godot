@@ -31,7 +31,7 @@
 #include "Utils.hpp"
 #include "../State.hpp"
 #include "../MappingUtils.hpp"
-
+#include "core/os/os.h"
 #if SE_ENABLE_INSPECTOR
 #include "debugger/inspector_agent.h"
 #include "debugger/env.h"
@@ -391,8 +391,12 @@ namespace se {
     , _isInCleanup(false)
     , _isErrorHandleWorking(false)
     {
-        v8::V8::InitializeICUDefaultLocation(nullptr, "icudtl.dat");
-        v8::V8::InitializeExternalStartupData("natives_blob.bin", "snapshot_blob.bin"); //REFINE
+        
+        auto path = OS::get_singleton()->get_executable_path();
+        v8::V8::InitializeICUDefaultLocation(path.utf8().get_data());
+        v8::V8::InitializeExternalStartupData(path.utf8().get_data());
+        // v8::V8::InitializeICUDefaultLocation(nullptr, "icudtl.dat");
+        // v8::V8::InitializeExternalStartupData("natives_blob.bin", "snapshot_blob.bin"); //REFINE
         _platform = v8::platform::NewDefaultPlatform();
         v8::V8::InitializePlatform(_platform.get());
         bool ok = v8::V8::Initialize();

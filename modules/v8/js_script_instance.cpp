@@ -5,13 +5,13 @@ JavaScriptInstance::JavaScriptInstance()
 }
 bool JavaScriptInstance::set(const StringName & p_name, const Variant & p_value)
 {
-	return _object->setProperty(p_name.operator String().utf8().get_data(), JSRegistrations::variant_to_js(p_value));
+	return _object.toObject()->setProperty(p_name.operator String().utf8().get_data(), JSRegistrations::variant_to_js(p_value));
 }
 
 bool JavaScriptInstance::get(const StringName & p_name, Variant & r_ret) const
 {
 	se::Value value;
-	if(!_object->getProperty(p_name.operator String().utf8().get_data(), &value)) return false;
+	if(!_object.toObject()->getProperty(p_name.operator String().utf8().get_data(), &value)) return false;
 	r_ret = JSRegistrations::js_to_variant(value);
 	return true;
 }
@@ -36,6 +36,8 @@ bool JavaScriptInstance::has_method(const StringName & p_method) const
 
 Variant JavaScriptInstance::call(const StringName & p_method, const Variant ** p_args, int p_argcount, Variant::CallError & r_error)
 {
+	
+	se::AutoHandleScope hs;
 	if ("_unhandled_input" == p_method) 
 	{
 		r_error.error = Variant::CallError::CALL_OK;
@@ -45,13 +47,13 @@ Variant JavaScriptInstance::call(const StringName & p_method, const Variant ** p
 	JSRegistrations::variant_to_js(p_args, p_argcount, &varr);
 	se::Value fn;
 	se::Object* fn_object;
-	if(!_object->getProperty(p_method.operator String().utf8().get_data(), &fn) || !fn.isObject() || !(fn_object = fn.toObject())->isFunction())
+	if(!_object.toObject()->getProperty(p_method.operator String().utf8().get_data(), &fn) || !fn.isObject() || !(fn_object = fn.toObject())->isFunction())
 	{
 		r_error.error = Variant::CallError::CALL_ERROR_INVALID_METHOD;
 		return Variant();
 	}
 	se::Value rval;
-	if(!fn_object->call(varr, _object, &rval))
+	if(!fn_object->call(varr, _object.toObject(), &rval))
 	{
 		r_error.error = Variant::CallError::CALL_ERROR_TOO_MANY_ARGUMENTS;
 		return Variant();
@@ -83,7 +85,7 @@ ScriptLanguage * JavaScriptInstance::get_language()
 	return _language;
 }
 
-void JavaScriptInstance::initialize(se::Object * jsobj, Object * owner, Ref<JS_Script> script, JSLanguage * language)
+void JavaScriptInstance::initialize(se::Value& jsobj, Object * owner, Ref<JS_Script> script, JSLanguage * language)
 {
 	_object = jsobj;
 	_owner = owner;

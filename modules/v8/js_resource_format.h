@@ -7,6 +7,7 @@
 class ResourceFormatLoaderJS : public ResourceFormatLoader {
 	GDCLASS(ResourceFormatLoaderJS, ResourceFormatLoader)
 public:
+	virtual ~ResourceFormatLoaderJS();
 	virtual RES load(const String &p_path, const String &p_original_path = "", Error *r_error = NULL);
 	virtual void get_recognized_extensions(List<String> *p_extensions) const;
 	virtual bool handles_type(const String &p_type) const;
@@ -17,6 +18,7 @@ public:
 class ResourceFormatSaverJS : public ResourceFormatSaver {
 	GDCLASS(ResourceFormatSaverJS, ResourceFormatSaver)
 public:
+	virtual ~ResourceFormatSaverJS();
 	virtual Error save(const String &p_path, const RES &p_resource, uint32_t p_flags = 0);
 	virtual void get_recognized_extensions(const RES &p_resource, List<String> *p_extensions) const;
 	virtual bool recognize(const RES &p_resource) const;

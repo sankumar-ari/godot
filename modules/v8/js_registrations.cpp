@@ -152,7 +152,7 @@ Variant JSRegistrations::js_to_variant(const se::Value& value)
 
 static bool CreatClassObject(se::State& state)
 {
-	StringName name(state.data().toString().c_str());
+	String name(state.data().toString().c_str());
 	if (!ClassDB::can_instance(name)) return false;
 	auto instance = ClassDB::instance(name);
 
@@ -170,7 +170,7 @@ static bool FunctionCall(se::State& state)
 {
 	auto obj = static_cast<Variant*>(state.nativeThisObject());
 	if (!obj) return false;
-	StringName name(state.data().toString().c_str());
+	String name(state.data().toString().c_str());
 	auto&& js_args = state.args();
 
 	Vector<Variant*> variant_args;
@@ -197,7 +197,7 @@ static bool PropertySet(se::State& state)
 {
 	auto obj = static_cast<Variant*>(state.nativeThisObject());
 	if (!obj) return false;
-	StringName name(state.data().toString().c_str());
+	String name(state.data().toString().c_str());
 	auto&& js_args = state.args();
 	auto variant_arg = JSRegistrations::js_to_variant(js_args[0]);
 	bool r_valid = false;
@@ -213,7 +213,7 @@ static bool PropertyGet(se::State& state)
 {
 	auto obj = static_cast<Variant*>(state.nativeThisObject());
 	if (!obj) return false;
-	StringName name(state.data().toString().c_str());
+	String name(state.data().toString().c_str());
 	bool r_valid = false;
 	auto result = obj->get_named(name, &r_valid);
 
@@ -306,7 +306,7 @@ void JSRegistrations::register_type(const StringName &p_type, se::Class* parent)
 	String type(p_type);
 	if (Engine::get_singleton()->has_singleton(type)) return;
 	if (p_type == "Object") type = String("GodotObject");
-	auto cls = se::Class::create(type.utf8().get_data(), nullptr, parent->getProto(), _SE(CreatClassObject));
+	auto cls = se::Class::create(type.utf8().get_data(), se::ScriptEngine::getInstance()->getGlobalObject(), parent?parent->getProto():nullptr, _SE(CreatClassObject));
 	register_type_members(type, cls);
 	cls->install();
 	registrations_[type.utf8().get_data()] = cls;
@@ -339,7 +339,7 @@ void JSRegistrations::register_builtins()
 	for (auto&& type : types)
 	{
 		auto name = Variant::get_type_name(type);
-		auto cls = se::Class::create(name.utf8().get_data(), nullptr, nullptr, _SE(CreatClassObject));
+		auto cls = se::Class::create(name.utf8().get_data(), se::ScriptEngine::getInstance()->getGlobalObject(), nullptr, _SE(CreatClassObject));
 		register_type_members(type, cls);
 		registrations_[name.utf8().get_data()] = cls;
 		cls->install();
