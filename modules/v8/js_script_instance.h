@@ -15,6 +15,7 @@ class JavaScriptInstance : public ScriptInstance
 {
 public:
 	JavaScriptInstance();
+	~JavaScriptInstance();
 	// Inherited via ScriptInstance
 	virtual bool set(const StringName & p_name, const Variant & p_value) override;
 	virtual bool get(const StringName & p_name, Variant & r_ret) const override;

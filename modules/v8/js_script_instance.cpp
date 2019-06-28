@@ -3,6 +3,10 @@
 JavaScriptInstance::JavaScriptInstance()
 {
 }
+JavaScriptInstance::~JavaScriptInstance()
+{
+	_script->remove_instance(_owner);
+}
 bool JavaScriptInstance::set(const StringName & p_name, const Variant & p_value)
 {
 	return _object.toObject()->setProperty(p_name.operator String().utf8().get_data(), JSRegistrations::variant_to_js(p_value));
@@ -47,7 +51,7 @@ Variant JavaScriptInstance::call(const StringName & p_method, const Variant ** p
 	JSRegistrations::variant_to_js(p_args, p_argcount, &varr);
 	se::Value fn;
 	se::Object* fn_object;
-	if(!_object.toObject()->getProperty(p_method.operator String().utf8().get_data(), &fn) || !fn.isObject() || !(fn_object = fn.toObject())->isFunction())
+	if(!_script->has_method(p_method) || !_object.toObject()->getProperty(p_method.operator String().utf8().get_data(), &fn) || !fn.isObject() || !(fn_object = fn.toObject())->isFunction())
 	{
 		r_error.error = Variant::CallError::CALL_ERROR_INVALID_METHOD;
 		return Variant();

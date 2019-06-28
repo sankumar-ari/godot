@@ -10,11 +10,14 @@
 #include "core/vector.h"
 #include "jslib/jswrapper/SeApi.h"
 #include "js_language.h"
-
+#include <set>
 class JS_Script : public Script
 {
+	
+	GDCLASS(JS_Script, Script);
 public:
 	JS_Script();
+	~JS_Script();
 	// Inherited via Script
 	virtual bool can_instance() const override;
 	virtual Ref<Script> get_base_script() const override;
@@ -56,6 +59,7 @@ public:
 #endif
 
 	virtual void update_exports();
+	void remove_instance(Object* owner);
 private:
 	
 #ifdef TOOLS_ENABLED
@@ -84,20 +88,19 @@ private:
 #endif
 
 	bool _update_exports();
-	
-	Set<StringName> members; //members are just indices to the instanced script.
-	Map<StringName, Variant> constants;
-	// Map<StringName, GDScriptFunction *> member_functions;
-	// Map<StringName, MemberInfo> member_indices; //members are just indices to the instanced script.
-	// Map<StringName, Ref<GDScript> > subclasses;
-	Map<StringName, Vector<StringName> > _signals;
+	void _parse_members();
+	std::set<std::string> members; //members are just indices to the instanced script.
+    std::set<std::string> methods;
+    std::set<std::string> properties;
+	std::set<std::string> signals;
+	SelfList<JS_Script> script_list;
 
 	bool tool;
 	bool valid;
 	String source;
 	se::Value _constructor;
 	JSLanguage* _language;
-	Set<const Object*> _instances;
+	Set<const Object*> instances;
 	String path;
 };
 #endif

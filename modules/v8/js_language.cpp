@@ -16,7 +16,7 @@ JSLanguage::~JSLanguage()
 }
 String JSLanguage::get_name() const
 {
-	return "ECMAScript";
+	return "JS_Script";
 }
 
 void JSLanguage::init()
@@ -25,7 +25,7 @@ void JSLanguage::init()
 
 String JSLanguage::get_type() const
 {
-	return "ECMAScript";
+	return "JS_Script";
 }
 
 String JSLanguage::get_extension() const
@@ -208,10 +208,28 @@ String JSLanguage::debug_parse_stack_level_expression(int p_level, const String 
 void JSLanguage::reload_all_scripts()
 {
 
+		for (SelfList<JS_Script> *elem = script_list.first(); elem; elem = elem->next()) 
+		{
+			elem->self()->reload(true);
+			
+		}
 }
 
 void JSLanguage::reload_tool_script(const Ref<Script>& p_script, bool p_soft_reload)
 {
+
+#ifdef DEBUG_ENABLED
+
+	{
+		
+
+		for (SelfList<JS_Script> *elem = script_list.first(); elem; elem = elem->next()) {
+			if (elem->self() == p_script.ptr()) {
+				elem->self()->reload(p_soft_reload);
+			}
+		}
+	}
+#endif
 }
 
 void JSLanguage::get_recognized_extensions(List<String>* p_extensions) const

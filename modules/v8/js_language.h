@@ -8,8 +8,10 @@
 #include "core/script_language.h"
 #include "core/ustring.h"
 #include "core/vector.h"
+class JS_Script;
 class JSLanguage : public ScriptLanguage
 {
+	friend JS_Script;
 public:
 
 	JSLanguage();
@@ -89,6 +91,7 @@ public:
 	_FORCE_INLINE_ static JSLanguage *get_singleton() { return singleton; }
 private:
 	static JSLanguage *JSLanguage::singleton;
+	SelfList<JS_Script>::List script_list;
 
 };
 #endif

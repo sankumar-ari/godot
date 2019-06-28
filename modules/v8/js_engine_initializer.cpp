@@ -2,12 +2,14 @@
 #include "core/list.h"
 #include "core/os/dir_access.h"
 #include "core/os/file_access.h"
+#include "core/os/os.h"
 #include "core/script_language.h"
 #include "core/ustring.h"
 #include "core/vector.h"
 #include "js_registrations.h"
 #include "jslib/jswrapper/SeApi.h"
 #include <iostream>
+#include <map>
 static void PrintValue(const se::Value &v) {
 	se::Value::Type t = v.getType();
 	switch (t) {
@@ -69,6 +71,118 @@ static bool print(se::State &state) {
 }
 
 SE_BIND_FUNC(print);
+enum PrintFunctions
+{
+		TEXT_PRINT,
+		TEXT_PRINT_TABBED,
+		TEXT_PRINT_SPACED,
+		TEXT_PRINTERR,
+		TEXT_PRINTRAW,
+		TEXT_PRINT_DEBUG,
+};
+static bool printCB(se::State& state)
+{
+	static const std::map<std::string, PrintFunctions> PrintFunctionsMap={
+		{"print", TEXT_PRINT},
+		{"printt", TEXT_PRINT_TABBED},
+		{"prints", TEXT_PRINT_SPACED},
+		{"printe", TEXT_PRINTERR},
+		{"printraw", TEXT_PRINTRAW},
+		{"printd", TEXT_PRINT_DEBUG}
+	};
+	auto it = PrintFunctionsMap.find(state.data().toString().c_str());
+	if(it == PrintFunctionsMap.end()) return false;
+	auto&& js_args = state.args();
+	Vector<Variant> variant_args;
+	Vector<const Variant*> p_args;
+	JSRegistrations::js_to_variant(js_args, variant_args, p_args);
+	auto p_arg_count = variant_args.size();
+	Variant r_ret;
+	switch (it->second)
+	{
+	
+		case TEXT_PRINT: {
+
+			String str;
+			for (int i = 0; i < p_arg_count; i++) {
+
+				str += p_args[i]->operator String();
+			}
+
+			print_line(str);
+			r_ret = Variant();
+
+		} break;
+		case TEXT_PRINT_TABBED: {
+
+			String str;
+			for (int i = 0; i < p_arg_count; i++) {
+
+				if (i)
+					str += "\t";
+				str += p_args[i]->operator String();
+			}
+
+			print_line(str);
+			r_ret = Variant();
+
+		} break;
+		case TEXT_PRINT_SPACED: {
+
+			String str;
+			for (int i = 0; i < p_arg_count; i++) {
+
+				if (i)
+					str += " ";
+				str += p_args[i]->operator String();
+			}
+
+			print_line(str);
+			r_ret = Variant();
+
+		} break;
+
+		case TEXT_PRINTERR: {
+
+			String str;
+			for (int i = 0; i < p_arg_count; i++) {
+
+				str += p_args[i]->operator String();
+			}
+
+			print_error(str);
+			r_ret = Variant();
+
+		} break;
+		case TEXT_PRINTRAW: {
+			String str;
+			for (int i = 0; i < p_arg_count; i++) {
+
+				str += p_args[i]->operator String();
+			}
+
+			OS::get_singleton()->print("%s", str.utf8().get_data());
+			r_ret = Variant();
+
+		} break;
+		case TEXT_PRINT_DEBUG: {
+			String str;
+			for (int i = 0; i < p_arg_count; i++) {
+
+				str += p_args[i]->operator String();
+			}
+
+			print_line(str);
+			r_ret = Variant();
+		} break;
+		
+	default:
+		return false;
+	}
+	return true;
+}
+
+SE_BIND_FUNC(printCB);
 
 static bool runScript(se::State &state) {
 	auto se = se::ScriptEngine::getInstance();
@@ -187,7 +301,13 @@ bool JSEngineInitializer::Initialize() {
 
 	se->enableDebugger("127.0.0.1", 6086, false);
 	se->addRegisterCallback([](se::Object *global) -> bool {
-		global->defineFunction("print", _SE(print));
+		global->defineFunction("print_n", _SE(print));
+		global->defineFunction("print", _SE(printCB));
+		global->defineFunction("printt", _SE(printCB));
+		global->defineFunction("prints", _SE(printCB));
+		global->defineFunction("printe", _SE(printCB));
+		global->defineFunction("printd", _SE(printCB));
+		global->defineFunction("printraw", _SE(printCB));
 		global->defineFunction("runScript", _SE(runScript));
 		JSRegistrations::register_all();
 		return true;

@@ -37,14 +37,14 @@ void ResourceFormatLoaderJS::get_recognized_extensions(List<String> *p_extension
 
 bool ResourceFormatLoaderJS::handles_type(const String &p_type) const {
 
-	return (p_type == "Script" || p_type == "ECMAScript");
+	return (p_type == "Script" || p_type == "JS_Script");
 }
 
 String ResourceFormatLoaderJS::get_resource_type(const String &p_path) const {
 
 	String el = p_path.get_extension().to_lower();
 	if (el == "js")
-		return "ECMAScript";
+		return "JS_Script";
 	return "";
 }
 

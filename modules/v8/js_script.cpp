@@ -1,15 +1,42 @@
 #include "js_script.h"
 #include "js_script_instance.h"
 #include "core/os/file_access.h"
-JS_Script::JS_Script() : tool(false), valid(false), _constructor()
+#include "js_registrations.h"
+JS_Script::JS_Script() : script_list(this), tool(false), valid(false), _constructor()
 {
 	
 	_language = JSLanguage::get_singleton();
-}
+	
+#ifdef TOOLS_ENABLED
+	source_changed_cache = false;
+	placeholder_fallback_enabled = false;
+#endif
 
+	_resource_path_changed();
+
+#ifdef DEBUG_ENABLED
+	{
+		
+		JSLanguage::get_singleton()->script_list.add(&this->script_list);
+	}
+#endif
+
+}
+JS_Script::~JS_Script()
+{
+	
+#ifdef DEBUG_ENABLED
+	
+	JSLanguage::get_singleton()->script_list.remove(&this->script_list);
+#endif
+}
 bool JS_Script::can_instance() const
 {
-	return  _constructor.isObject() && (!tool && !ScriptServer::is_scripting_enabled());
+#ifdef TOOLS_ENABLED
+	return _constructor.isObject() && (tool || ScriptServer::is_scripting_enabled());
+#else
+	return _constructor.isObject();
+#endif
 }
 
 Ref<Script> JS_Script::get_base_script() const
@@ -30,17 +57,26 @@ ScriptInstance * JS_Script::instance_create(Object * p_this)
 	JavaScriptInstance* instance = memnew(JavaScriptInstance);
 	se::Value ret;
 	if(!_constructor.toObject()->CallAsConstructor(se::ValueArray(), &ret) || !ret.isObject()) return nullptr;
-
+	auto obj = ret.toObject();
+	auto pdata = reinterpret_cast<Variant*>(obj->getPrivateData());
+	if(pdata) delete pdata;
+	obj->clearPrivateData();
+	obj->setPrivateData(new Variant(p_this));
+	
+	if(members.empty()) JSRegistrations::get_members(obj, members, methods, properties, signals);
 	instance->initialize(ret, p_this, Ref<Script>(this), _language);
-	_instances.insert(p_this);
+	instances.insert(p_this);
 	return instance;
 }
 
 bool JS_Script::instance_has(const Object * p_this) const
 {
-	return _instances.has(p_this);
+	return instances.has(p_this);
 }
-
+void JS_Script::remove_instance(Object* owner)
+{
+	instances.erase(owner);
+}
 bool JS_Script::has_source_code() const
 {
 	return !source.empty();
@@ -63,6 +99,7 @@ void JS_Script::set_source_code(const String & p_code)
 
 Error JS_Script::reload(bool p_keep_state)
 {
+	ERR_FAIL_COND_V(!p_keep_state && instances.size(), ERR_ALREADY_IN_USE);
 	valid = false;
 	se::Value rval;
 		
@@ -78,20 +115,25 @@ Error JS_Script::reload(bool p_keep_state)
 		return ERR_COMPILATION_FAILED;
 	}
 	_constructor = rval;
-	se::Value ret;
-	if(!_constructor.toObject()->CallAsConstructor(se::ValueArray(), &ret) || !ret.isObject())
-	{ 
-		return ERR_COMPILATION_FAILED;
-	}
-
-
+	
+	se::Object* ctor_obj = _constructor.toObject();
+	
+	// se::Value ret;
+	// if(!ctor_obj->CallAsConstructor(se::ValueArray(), &ret) || !ret.isObject())
+	// { 
+	// 	return ERR_COMPILATION_FAILED;
+	// }
+	JSRegistrations::get_members(ctor_obj, members, methods, properties, signals);
+   	_parse_members();
+	valid=true;
 	return OK;
 }
-
+void  JS_Script::_parse_members()
+{
+}
 bool JS_Script::has_method(const StringName & p_method) const
 {
-	//if(_constructor->getAllKeys())
-	return false;
+	return methods.find(p_method.operator String().utf8().get_data()) != methods.end();
 }
 
 MethodInfo JS_Script::get_method_info(const StringName & p_method) const
@@ -116,7 +158,7 @@ ScriptLanguage * JS_Script::get_language() const
 
 bool JS_Script::has_script_signal(const StringName & p_signal) const
 {
-	if (_signals.has(p_signal))
+	if (signals.find(p_signal.operator String().utf8().get_data())!=signals.end())
 		return true;
 	// if (base.is_valid()) {
 	// 	return base->has_script_signal(p_signal);
@@ -131,15 +173,10 @@ bool JS_Script::has_script_signal(const StringName & p_signal) const
 
 void JS_Script::get_script_signal_list(List<MethodInfo>* r_signals) const
 {
-	for (const Map<StringName, Vector<StringName> >::Element *E = _signals.front(); E; E = E->next()) {
-
+	for(auto&& signal : signals)
+	{
 		MethodInfo mi;
-		mi.name = E->key();
-		for (int i = 0; i < E->get().size(); i++) {
-			PropertyInfo arg;
-			arg.name = E->get()[i];
-			mi.arguments.push_back(arg);
-		}
+		mi.name = signal.c_str();
 		r_signals->push_back(mi);
 	}
 
@@ -164,6 +201,8 @@ bool JS_Script::get_property_default_value(const StringName & p_property, Varian
 
 void JS_Script::get_script_method_list(List<MethodInfo>* p_list) const
 {
+
+
 }
 
 void JS_Script::get_script_property_list(List<PropertyInfo>* p_list) const
@@ -212,17 +251,12 @@ Error JS_Script::load_source_code(const String &p_path)
 
 void JS_Script::get_constants(Map<StringName, Variant> *p_constants) {
 
-	if (p_constants) {
-		for (Map<StringName, Variant>::Element *E = constants.front(); E; E = E->next()) {
-			(*p_constants)[E->key()] = E->value();
-		}
-	}
 }
 
 void JS_Script::get_members(Set<StringName> *p_members) {
 	if (p_members) {
-		for (Set<StringName>::Element *E = members.front(); E; E = E->next()) {
-			p_members->insert(E->get());
+		for(auto&& member : members) {
+			p_members->insert(member.c_str());
 		}
 	}
 }
@@ -231,17 +265,17 @@ void JS_Script::get_members(Set<StringName> *p_members) {
 #ifdef TOOLS_ENABLED
 void JS_Script::_update_exports_values(Map<StringName, Variant> &values, List<PropertyInfo> &propnames) {
 
-	if (base_cache.is_valid()) {
-		base_cache->_update_exports_values(values, propnames);
-	}
+	// if (base_cache.is_valid()) {
+	// 	base_cache->_update_exports_values(values, propnames);
+	// }
 
-	for (Map<StringName, Variant>::Element *E = member_default_values_cache.front(); E; E = E->next()) {
-		values[E->key()] = E->get();
-	}
+	// for (Map<StringName, Variant>::Element *E = member_default_values_cache.front(); E; E = E->next()) {
+	// 	values[E->key()] = E->get();
+	// }
 
-	for (List<PropertyInfo>::Element *E = members_cache.front(); E; E = E->next()) {
-		propnames.push_back(E->get());
-	}
+	// for (List<PropertyInfo>::Element *E = members_cache.front(); E; E = E->next()) {
+	// 	propnames.push_back(E->get());
+	// }
 }
 #endif
 

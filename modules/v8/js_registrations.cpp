@@ -103,6 +103,18 @@ void JSRegistrations::variant_to_js(const Variant ** p_args, int p_argcount, se:
 	}
 }
 
+void JSRegistrations::js_to_variant(const se::ValueArray& values, Vector<Variant>& out_values, Vector<const Variant*>& out_valuesp)
+{
+	out_values.resize(values.size());
+	out_valuesp.resize(values.size());
+	int i = 0;
+	for (size_t i = 0; i < values.size(); i++)
+	{
+		out_values.write[i] = js_to_variant(values[i]);
+		out_valuesp.write[i] = &out_values[i];
+	}
+	
+}
 Variant JSRegistrations::js_to_variant(const se::Value& value)
 {
 	auto type = value.getType();
@@ -172,15 +184,13 @@ static bool FunctionCall(se::State& state)
 	if (!obj) return false;
 	String name(state.data().toString().c_str());
 	auto&& js_args = state.args();
-
-	Vector<Variant*> variant_args;
-	for (auto&& arg : js_args)
-	{
-		variant_args.push_back(new Variant(JSRegistrations::js_to_variant(arg)));
-	}
+	Vector<Variant> variant_args;
+	Vector<const Variant*> variant_argsp;
+	JSRegistrations::js_to_variant(js_args, variant_args, variant_argsp);
+	
 	Variant::CallError r_error;
 	Variant result;
-	result = obj->call(name, variant_args.ptr(), variant_args.size(), &r_error);
+	result = obj->call(name, (const Variant **)variant_argsp.ptr(), variant_argsp.size(), r_error);
 
 	if (r_error.error == Variant::CallError::CALL_OK)
 	{
@@ -285,6 +295,7 @@ void JSRegistrations::register_type_members(const List<MethodInfo>& methods, con
 	}
 	for (const List<PropertyInfo>::Element *E = props.front(); E; E = E->next())
 	{
+		if (E->get().usage & (PROPERTY_USAGE_GROUP | PROPERTY_USAGE_CATEGORY)) continue;
 		cls->defineProperty(E->get().name.utf8().get_data(), _SE(PropertyGet), _SE(PropertySet));
 	}
 }
@@ -297,6 +308,7 @@ void JSRegistrations::register_type_members(const List<MethodInfo>& methods, con
 	}
 	for (const List<PropertyInfo>::Element *E = props.front(); E; E = E->next())
 	{
+		if (E->get().usage & (PROPERTY_USAGE_GROUP | PROPERTY_USAGE_CATEGORY)) continue;
 		cls->defineProperty(E->get().name.utf8().get_data(), _SE(PropertyGet), _SE(PropertySet));
 	}
 }
@@ -350,4 +362,66 @@ void JSRegistrations::register_all()
 	register_type("Object", nullptr);
 	register_singletons();
 	register_builtins();
+}
+
+void JSRegistrations::get_members(se::Object* obj, std::set<std::string>& members, std::set<std::string>& methods, 
+	std::set<std::string>& properties, std::set<std::string>& signals)
+{
+	members.clear();
+	methods.clear();
+	properties.clear();
+	signals.clear();
+	se::Value rval;
+	auto gobj = se::ScriptEngine::getInstance()->getGlobalObject();
+	gobj->getProperty("Object", &rval);
+	se::Value proto;
+	obj->getProperty("prototype", &proto);
+	auto protoObj = proto.toObject();
+
+	se::Value propNames;
+	se::Value value;
+	rval.toObject()->getProperty("getOwnPropertyNames", &propNames);
+	
+
+	se::ValueArray args;
+	args.push_back(proto);
+	se::Value rvalue;
+	propNames.toObject()->call(args, nullptr, &rvalue);
+	auto namesObj = rvalue.toObject();
+	uint32_t len;
+	namesObj->getArrayLength(&len);
+	for(uint32_t i = 0; i < len; i++)
+	{
+		se::Value elem;
+		namesObj->getArrayElement(i, &elem);
+		auto key = elem.toString();
+		
+		members.insert(key);
+		se::Value key_value;
+		protoObj->getProperty(key.c_str(), &key_value);
+		if(key_value.isObject() && key_value.toObject()->isFunction())
+		{
+			methods.insert(key);
+		}
+		else if(key == "signals" && key_value.isObject())
+		{
+			auto signal_array = key_value.toObject();
+			if(signal_array->isArray())
+			{
+				uint32_t length;
+				signal_array->getArrayLength(&length);
+				for(uint32_t i = 0; i < length; i++)
+				{
+					se::Value signal;
+					signal_array->getArrayElement(i, &signal);
+					signals.insert(signal.toStringForce());
+				}
+			}
+		}
+		else
+		{
+			properties.insert(key);
+		}
+		
+	}
 }
